@@ -1,0 +1,6 @@
+{
+  "name": "Worscoi - Livros digitais e notícias",
+  "description": "Reserve seu livro digital, leia online no navegador e acompanhe notícias de cultura, literatura e ideias.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
