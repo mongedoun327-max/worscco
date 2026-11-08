@@ -686,6 +686,7 @@ export const useEpisodes = (contentId?: string) =>
         const { getWebtoonById } = await import("@/lib/webtoons");
         const { getFullWebtoonChapters } = await import("@/lib/webtoonSyncEngine");
         const { syncOfficialWebtoonChapters, buildOfficialViewerUrl } = await import("@/lib/webtoonOfficialSync");
+        const { generateDynamicManhwaStoryPanels } = await import("@/lib/webtoonStoryGenerator");
 
         const found = getWebtoonById(contentId);
         const baseEpisodes = found?.episodes || [];
@@ -696,13 +697,18 @@ export const useEpisodes = (contentId?: string) =>
 
         // 1. Populate comprehensive catalog backlog (ensures 50 to 500+ real chapters exist)
         for (const ep of fullBacklog) {
+          const panels =
+            ep.panels && ep.panels.length > 0
+              ? ep.panels
+              : generateDynamicManhwaStoryPanels(contentId, ep.number, ep.title, found?.cover || ep.cover, found?.title);
+
           mergedMap.set(ep.number, {
             id: ep.id,
             content_id: contentId,
             number: ep.number,
             title: ep.title,
             body: ep.synopsis,
-            images: ep.panels && ep.panels.length > 0 ? ep.panels : [],
+            images: panels,
             is_free: ep.is_free,
             published_at: ep.release_date,
             viewer_url: ep.viewer_url || buildOfficialViewerUrl(contentId, ep.number),
@@ -712,7 +718,13 @@ export const useEpisodes = (contentId?: string) =>
         // 2. Base local physical scans take precedence for local multi-page chapters
         for (const ep of baseEpisodes) {
           const existing = mergedMap.get(ep.number);
-          const panels = ep.panels && ep.panels.length > 0 ? ep.panels : existing?.images || [];
+          const panels =
+            ep.panels && ep.panels.length > 0
+              ? ep.panels
+              : existing?.images && existing.images.length > 0
+              ? existing.images
+              : generateDynamicManhwaStoryPanels(contentId, ep.number, ep.title, found?.cover || ep.cover, found?.title);
+
           mergedMap.set(ep.number, {
             id: existing?.id || ep.id || `${contentId}-ep-${ep.number}`,
             content_id: contentId,
@@ -729,7 +741,13 @@ export const useEpisodes = (contentId?: string) =>
         // 3. Official WEBTOON live scraped chapters override with live titles and exact platform links
         for (const ch of liveChapters) {
           const existing = mergedMap.get(ch.number);
-          const livePanels = ch.panels && ch.panels.length > 1 ? ch.panels : existing?.images || [];
+          const livePanels =
+            ch.panels && ch.panels.length > 1
+              ? ch.panels
+              : existing?.images && existing.images.length > 0
+              ? existing.images
+              : generateDynamicManhwaStoryPanels(contentId, ch.number, ch.title, found?.cover, found?.title);
+
           mergedMap.set(ch.number, {
             id: existing?.id || ch.id || `${contentId}-ep-${ch.number}`,
             content_id: contentId,

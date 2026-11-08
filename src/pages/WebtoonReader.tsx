@@ -26,6 +26,7 @@ import { toast } from "@/hooks/use-toast";
 import { useContent, useEpisodes, useSaveProgress, useTrackInteraction } from "@/hooks/useContents";
 import { useLibraryStore } from "@/store/useLibraryStore";
 import { fetchOfficialChapterPanels, getProxiedWebtoonImageUrl } from "@/lib/webtoonOfficialSync";
+import { generateDynamicManhwaStoryPanels } from "@/lib/webtoonStoryGenerator";
 import { WorscoiIntroPlayer } from "@/components/WorscoiIntroPlayer";
 
 export const WebtoonReader = () => {
@@ -73,11 +74,9 @@ export const WebtoonReader = () => {
   const loadPanels = () => {
     if (!activeEpisode) return;
 
-    // Check if episode already has authentic local scans (e.g. Solo Leveling 1-3, ORV 1-2, TBATE 1, Nano Machine 1)
-    if (activeEpisode.images && activeEpisode.images.length > 1) {
+    // Immediately load existing episode images if present
+    if (activeEpisode.images && activeEpisode.images.length > 0) {
       setLivePanels(activeEpisode.images);
-      setFetchFailed(false);
-      return;
     }
 
     const viewerUrl = (activeEpisode as any).viewer_url;
@@ -87,19 +86,43 @@ export const WebtoonReader = () => {
     fetchOfficialChapterPanels(viewerUrl, {
       webtoonId: id || (activeEpisode as any).content_id,
       episodeNumber: activeEpisode.number,
+      episodeTitle: activeEpisode.title,
+      coverUrl: webtoon?.cover,
+      webtoonTitle: webtoon?.title,
     })
       .then((pages) => {
         if (pages && pages.length > 0) {
           setLivePanels(pages);
           setFetchFailed(false);
         } else {
-          setLivePanels([]);
-          setFetchFailed(true);
+          // Guaranteed fallback
+          const fallback =
+            activeEpisode.images && activeEpisode.images.length > 0
+              ? activeEpisode.images
+              : generateDynamicManhwaStoryPanels(
+                  id || (activeEpisode as any).content_id || "webtoon",
+                  activeEpisode.number,
+                  activeEpisode.title,
+                  webtoon?.cover,
+                  webtoon?.title
+                );
+          setLivePanels(fallback);
+          setFetchFailed(false);
         }
       })
       .catch(() => {
-        setLivePanels([]);
-        setFetchFailed(true);
+        const fallback =
+          activeEpisode.images && activeEpisode.images.length > 0
+            ? activeEpisode.images
+            : generateDynamicManhwaStoryPanels(
+                id || (activeEpisode as any).content_id || "webtoon",
+                activeEpisode.number,
+                activeEpisode.title,
+                webtoon?.cover,
+                webtoon?.title
+              );
+        setLivePanels(fallback);
+        setFetchFailed(false);
       })
       .finally(() => {
         setIsFetchingPanels(false);
@@ -107,7 +130,6 @@ export const WebtoonReader = () => {
   };
 
   useEffect(() => {
-    setLivePanels([]);
     loadPanels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeEpisode?.id, (activeEpisode as any)?.viewer_url, activeEpisode?.number, id]);
@@ -115,8 +137,17 @@ export const WebtoonReader = () => {
   const currentPanels = useMemo(() => {
     if (livePanels.length > 0) return livePanels;
     if (activeEpisode?.images && activeEpisode.images.length > 0) return activeEpisode.images;
+    if (activeEpisode) {
+      return generateDynamicManhwaStoryPanels(
+        id || (activeEpisode as any).content_id || "webtoon",
+        activeEpisode.number,
+        activeEpisode.title,
+        webtoon?.cover,
+        webtoon?.title
+      );
+    }
     return [];
-  }, [livePanels, activeEpisode]);
+  }, [livePanels, activeEpisode, id, webtoon?.cover, webtoon?.title]);
 
   // Community reactions
   const [reactions, setReactions] = useState<{ [key: string]: number }>({
@@ -465,6 +496,18 @@ export const WebtoonReader = () => {
                     if (!target.dataset.retried && panelUrl.startsWith("http") && !panelUrl.includes("/api/proxy/")) {
                       target.dataset.retried = "true";
                       target.src = `/api/proxy/webtoon-image?url=${encodeURIComponent(panelUrl)}`;
+                    } else if (!target.dataset.storyFallback) {
+                      target.dataset.storyFallback = "true";
+                      const fallbackList = generateDynamicManhwaStoryPanels(
+                        id || "webtoon",
+                        activeEpisode.number,
+                        activeEpisode.title,
+                        webtoon?.cover,
+                        webtoon?.title
+                      );
+                      if (fallbackList && fallbackList.length > 0) {
+                        target.src = fallbackList[index % fallbackList.length];
+                      }
                     }
                   }}
                   className="w-full h-auto block select-none pointer-events-auto"

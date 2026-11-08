@@ -653,8 +653,8 @@ const mappedExpandedWebtoons: Webtoon[] = EXPANDED_WEBTOONS.map((e) => {
     trending: e.trending,
     weekly_rank: e.weekly_rank,
     collection: e.collection,
-    episodes_count: 0,
-    episodes: [],
+    episodes_count: e.episodes_count || 60,
+    episodes: getFullWebtoonChapters(e.id),
   };
 });
 
@@ -665,10 +665,10 @@ export const CURATED_WEBTOONS: Webtoon[] = [
 
 export function getCuratedWebtoons(): Webtoon[] {
   return CURATED_WEBTOONS.map((w) => {
-    const fullEpisodes = getFullWebtoonChapters(w.id);
+    const fullEpisodes = w.episodes && w.episodes.length > 0 ? w.episodes : getFullWebtoonChapters(w.id);
     return {
       ...w,
-      episodes_count: fullEpisodes.length,
+      episodes_count: fullEpisodes.length || w.episodes_count || 60,
       episodes: fullEpisodes,
     };
   });
@@ -677,18 +677,20 @@ export function getCuratedWebtoons(): Webtoon[] {
 export function getWebtoonById(id: string): Webtoon | undefined {
   if (!id) return undefined;
   const cleanId = id.startsWith("wt-") ? id : `wt-${id}`;
+  const rawSlug = id.replace(/^wt-auto-/, "").replace(/^wt-/, "");
   const found = CURATED_WEBTOONS.find(
     (w) =>
       w.id === id ||
       w.id === cleanId ||
+      w.id === `wt-auto-${rawSlug}` ||
       w.slug === id ||
-      w.slug === id.replace(/^wt-/, "").replace(/^auto-/, "")
+      w.slug === rawSlug
   );
   if (!found) return undefined;
-  const fullEpisodes = getFullWebtoonChapters(found.id);
+  const fullEpisodes = found.episodes && found.episodes.length > 0 ? found.episodes : getFullWebtoonChapters(found.id);
   return {
     ...found,
-    episodes_count: fullEpisodes.length,
+    episodes_count: fullEpisodes.length || found.episodes_count || 60,
     episodes: fullEpisodes,
   };
 }

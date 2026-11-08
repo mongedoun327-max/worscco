@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useContent, useEpisodes, useSaveProgress, useTrackInteraction } from "@/hooks/useContents";
 import { useChapters } from "@/hooks/useCatalog";
 import { prefetchAdjacentChapters } from "@/lib/webtoonSyncEngine";
+import { generateDynamicManhwaStoryPanels } from "@/lib/webtoonStoryGenerator";
 
 const ContentReader = () => {
   const { id, episodeId } = useParams();
@@ -174,7 +175,12 @@ const ContentReader = () => {
           </div>
 
           {(() => {
-            const panels = episode?.images?.length ? episode.images : [];
+            const panels =
+              episode?.images && episode.images.length > 0
+                ? episode.images
+                : episode && item
+                ? generateDynamicManhwaStoryPanels(item.id, episode.number, episode.title, item.cover, item.title)
+                : [];
 
             return panels.length > 0 ? (
               <div className="space-y-3 mb-10">

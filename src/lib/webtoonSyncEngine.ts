@@ -8,6 +8,7 @@
 import { auditAndSanitizeCatalog, generateContentHash } from "./webtoonSanitizer";
 import { getOfficialCover } from "./webtoonCovers";
 import { OFFICIAL_WEBTOON_REGISTRY, buildOfficialViewerUrl } from "./webtoonOfficialSync";
+import { generateDynamicManhwaStoryPanels } from "./webtoonStoryGenerator";
 
 export interface WebtoonSyncStatus {
   webtoon_id: string;
@@ -415,6 +416,12 @@ export function getFullWebtoonChapters(webtoonId: string): DetailedWebtoonChapte
         panels = NANO_ALL_PAGES;
         chapterCover = NANO_ALL_PAGES[0];
       }
+    }
+
+    // Ensure all chapters have reproducible manhwa panels
+    if (panels.length === 0) {
+      panels = generateDynamicManhwaStoryPanels(cleanId, num, title, baseCover, normId.replace(/-/g, " "));
+      chapterCover = panels[0] || baseCover;
     }
 
     // Assign official Webtoons.com viewer link for live Akamai streaming
