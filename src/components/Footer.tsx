@@ -71,6 +71,16 @@ const Footer = () => {
                   Privacidade
                 </Link>
               </li>
+              <li>
+                <a
+                  href="/sitemap.xml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/70 hover:text-background smooth-hover text-xs font-light"
+                >
+                  Mapa do Site (XML)
+                </a>
+              </li>
             </ul>
           </div>
 

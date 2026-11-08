@@ -2479,9 +2479,43 @@ function officialWebtoonIntegrationPlugin(): Plugin {
   };
 }
 
+function sitemapPlugin(): Plugin {
+  return {
+    name: 'worscoi-sitemap-plugin',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const urlPath = (req.url || '').split('?')[0];
+        if (urlPath === '/sitemap.xml') {
+          const sitemapPath = path.resolve(__dirname, 'public/sitemap.xml');
+          if (fs.existsSync(sitemapPath)) {
+            const xml = fs.readFileSync(sitemapPath, 'utf-8');
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            res.end(xml);
+            return;
+          }
+        }
+        if (urlPath === '/robots.txt') {
+          const robotsPath = path.resolve(__dirname, 'public/robots.txt');
+          if (fs.existsSync(robotsPath)) {
+            const txt = fs.readFileSync(robotsPath, 'utf-8');
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            res.end(txt);
+            return;
+          }
+        }
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), newsRssPlugin(), gutenbergBooksPlugin(), bookAutomationPlugin(), officialWebtoonIntegrationPlugin()],
+    plugins: [react(), newsRssPlugin(), gutenbergBooksPlugin(), bookAutomationPlugin(), officialWebtoonIntegrationPlugin(), sitemapPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
