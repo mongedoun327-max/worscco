@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import brandLogo from "@/assets/worscoi-stylized-logo.png";
@@ -26,6 +26,14 @@ const Navigation = ({ variant = "default" }: NavigationProps) => {
   const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
 
+  const handleAuthAction = () => {
+    if (user) {
+      navigate("/biblioteca");
+    } else {
+      navigate("/auth");
+    }
+  };
+
   const handleReserve = () => {
     if (isHomePage) {
       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
@@ -42,9 +50,6 @@ const Navigation = ({ variant = "default" }: NavigationProps) => {
     { label: "Webtoons", href: "/webtoons" },
     { label: "Animes", href: "/animes" },
     { label: "Notícias", href: "/noticias" },
-    { label: "Sobre", href: "/sobre" },
-    { label: "Contato", href: "/contato" },
-    { label: user ? "Minha estante" : "Entrar", href: user ? "/biblioteca" : "/auth" },
   ];
 
   const lightText = isMobileMenuOpen || isDark || !isScrolled;
@@ -100,14 +105,15 @@ const Navigation = ({ variant = "default" }: NavigationProps) => {
             <Button
               variant="outline"
               size="sm"
-              className={`rounded-full smooth-hover text-[11px] uppercase tracking-wider font-normal backdrop-blur-md border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] px-5 ${
+              className={`rounded-full smooth-hover text-[11px] uppercase tracking-wider font-normal backdrop-blur-md border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] px-5 flex items-center gap-1.5 ${
                 isDark || !isScrolled
                   ? "bg-white/10 text-white hover:bg-primary/80 hover:text-white hover:border-primary/80"
                   : "bg-white/20 text-foreground hover:bg-primary/80 hover:text-white hover:border-primary/80"
               }`}
-              onClick={handleReserve}
+              onClick={handleAuthAction}
             >
-              Reservar Livro
+              <LogIn className="h-3.5 w-3.5" />
+              {user ? "Minha Estante" : "Entrar"}
             </Button>
           </div>
 
@@ -143,17 +149,18 @@ const Navigation = ({ variant = "default" }: NavigationProps) => {
               ))}
               <Button
                 variant="outline"
-                className={`w-full mt-4 rounded-full text-[11px] uppercase tracking-wider font-normal backdrop-blur-md border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] px-5 ${
+                className={`w-full mt-4 rounded-full text-[11px] uppercase tracking-wider font-normal backdrop-blur-md border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)] px-5 flex items-center justify-center gap-1.5 ${
                   isDark || !isScrolled
                     ? "bg-white/10 text-white hover:bg-primary/80 hover:text-white hover:border-primary/80"
                     : "bg-white/20 text-foreground hover:bg-primary/80 hover:text-white hover:border-primary/80"
                 }`}
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  handleReserve();
+                  handleAuthAction();
                 }}
               >
-                Reservar Livro
+                <LogIn className="h-3.5 w-3.5" />
+                {user ? "Minha Estante" : "Entrar"}
               </Button>
             </motion.div>
           )}
