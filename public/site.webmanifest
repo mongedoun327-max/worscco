@@ -1,6 +1,7 @@
 {
   "name": "Worscoi — Livros digitais e notícias",
   "short_name": "Worscoi",
+  "description": "Livros, notícias globais, streaming e webtoons, com um espaço para acompanhar as últimas novidades sobre cultura, literatura e grandes ideias.",
   "icons": [
     {
       "src": "/favicon-192x192.png",

@@ -19,7 +19,7 @@ const Footer = () => {
               <span className="text-sm font-normal tracking-wide">orsco</span>
             </div>
             <p className="text-background/70 text-xs font-light leading-relaxed max-w-xs">
-              Livros digitais para ler no navegador e notícias sobre cultura, literatura e ideias.
+              Livros, notícias globais, streaming e webtoons, com um espaço para acompanhar as últimas novidades sobre cultura, literatura e grandes ideias.
             </p>
           </div>
 
