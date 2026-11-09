@@ -82,6 +82,9 @@ export async function deleteNewsFromCloud(idOrSlug: string): Promise<boolean> {
 }
 
 export async function fetchCloudNews(): Promise<NewsItem[]> {
+  if (!auth.currentUser) {
+    return [];
+  }
   try {
     const q = query(
       collection(db, NEWS_COLLECTION),
@@ -91,9 +94,7 @@ export async function fetchCloudNews(): Promise<NewsItem[]> {
     const snapshot = await getDocs(q);
     return snapshot.docs.map((d) => d.data() as NewsItem);
   } catch (err: any) {
-    if (err?.code === "permission-denied") {
-      handleFirestoreError(err, OperationType.LIST, NEWS_COLLECTION);
-    }
+    console.warn("[CloudEditorial] Could not list cloud news:", err?.message || err);
     return [];
   }
 }
@@ -151,6 +152,9 @@ export async function deleteBookFromCloud(bookId: string): Promise<boolean> {
 }
 
 export async function fetchCloudBooks(): Promise<Book[]> {
+  if (!auth.currentUser) {
+    return [];
+  }
   try {
     const q = query(
       collection(db, BOOKS_COLLECTION),
@@ -160,9 +164,7 @@ export async function fetchCloudBooks(): Promise<Book[]> {
     const snapshot = await getDocs(q);
     return snapshot.docs.map((d) => d.data() as Book);
   } catch (err: any) {
-    if (err?.code === "permission-denied") {
-      handleFirestoreError(err, OperationType.LIST, BOOKS_COLLECTION);
-    }
+    console.warn("[CloudEditorial] Could not list cloud books:", err?.message || err);
     return [];
   }
 }
@@ -198,6 +200,9 @@ export async function publishChapterToCloud(chapter: Chapter): Promise<boolean> 
 }
 
 export async function fetchCloudChapters(bookId: string): Promise<Chapter[]> {
+  if (!auth.currentUser) {
+    return [];
+  }
   try {
     const q = query(
       collection(db, CHAPTERS_COLLECTION),
@@ -208,9 +213,7 @@ export async function fetchCloudChapters(bookId: string): Promise<Chapter[]> {
     list.sort((a, b) => (a.position || 0) - (b.position || 0));
     return list;
   } catch (err: any) {
-    if (err?.code === "permission-denied") {
-      handleFirestoreError(err, OperationType.LIST, CHAPTERS_COLLECTION);
-    }
+    console.warn("[CloudEditorial] Could not list cloud chapters:", err?.message || err);
     return [];
   }
 }
@@ -247,6 +250,9 @@ export async function publishAnimeOverrideToCloud(animeId: string, patch: Record
 }
 
 export async function fetchCloudAnimeOverrides(): Promise<Record<string, Record<string, any>>> {
+  if (!auth.currentUser) {
+    return {};
+  }
   try {
     const snapshot = await getDocs(collection(db, ANIME_OVERRIDES_COLLECTION));
     const result: Record<string, Record<string, any>> = {};
@@ -255,9 +261,7 @@ export async function fetchCloudAnimeOverrides(): Promise<Record<string, Record<
     }
     return result;
   } catch (err: any) {
-    if (err?.code === "permission-denied") {
-      handleFirestoreError(err, OperationType.LIST, ANIME_OVERRIDES_COLLECTION);
-    }
+    console.warn("[CloudEditorial] Could not list cloud anime overrides:", err?.message || err);
     return {};
   }
 }

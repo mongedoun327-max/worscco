@@ -11,6 +11,8 @@ import {
   fetchCloudBooks,
   fetchCloudAnimeOverrides,
 } from "./cloudEditorialService";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const SPECIAL_ADMIN_EMAIL = "miguelworscoi@gmail.com";
 export const SPECIAL_ADMIN_PASS = "004116";
@@ -29,7 +31,7 @@ const ANIME_OVERRIDES_KEY = "worscoi_editorial_anime_overrides_v1";
 
 let isCloudSyncing = false;
 export async function initCloudEditorialSync(): Promise<void> {
-  if (typeof window === "undefined" || isCloudSyncing) return;
+  if (typeof window === "undefined" || isCloudSyncing || !auth.currentUser) return;
   isCloudSyncing = true;
   try {
     const [cloudNews, cloudBooks, cloudAnimes] = await Promise.all([
@@ -95,7 +97,11 @@ export async function initCloudEditorialSync(): Promise<void> {
 }
 
 if (typeof window !== "undefined") {
-  void initCloudEditorialSync();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      void initCloudEditorialSync();
+    }
+  });
 }
 
 function safeReadJson<T>(key: string, fallback: T): T {

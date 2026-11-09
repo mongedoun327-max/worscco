@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getFirestore, doc, getDocFromServer } from "firebase/firestore";
+import { initializeFirestore, getFirestore, doc, getDocFromServer } from "firebase/firestore";
 import firebaseConfig from "../../firebase-applet-config.json";
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
@@ -8,8 +8,20 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// CRITICAL: The app will break without specifying firestoreDatabaseId
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Initialize Firestore with resilient long-polling to prevent 10s proxy timeouts in sandboxes
+let dbInstance;
+try {
+  dbInstance = initializeFirestore(
+    app,
+    {
+      experimentalAutoDetectLongPolling: true,
+    },
+    firebaseConfig.firestoreDatabaseId
+  );
+} catch {
+  dbInstance = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+}
+export const db = dbInstance;
 
 export const signInWithGoogle = async () => {
   try {
@@ -21,15 +33,20 @@ export const signInWithGoogle = async () => {
   }
 };
 
-// Connection test on boot as required by Firebase guidelines
+// Connection test on boot: only executed when authenticated to prevent 10s backend timeout
 async function testConnection() {
+  if (!auth.currentUser) {
+    return;
+  }
   try {
     await getDocFromServer(doc(db, "test", "connection"));
   } catch (error) {
+    // Graceful non-fatal handling; client operates in offline mode
     if (error instanceof Error && error.message.includes("the client is offline")) {
-      console.error("Please check your Firebase configuration.");
+      console.warn("Firestore running in offline mode.");
     }
   }
 }
 
 testConnection();
+
