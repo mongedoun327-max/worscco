@@ -62,6 +62,16 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <Link to="/sobre" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
+                  Sobre nós
+                </Link>
+              </li>
+              <li>
+                <Link to="/contato" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
+                  Contato
+                </Link>
+              </li>
+              <li>
                 <Link to="/termos" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
                   Termos de Uso
                 </Link>
@@ -71,27 +81,19 @@ const Footer = () => {
                   Privacidade
                 </Link>
               </li>
-              <li>
-                <Link to="/mapa-do-site" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
-                  Mapa do Site
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="/sitemap.xml"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-background/70 hover:text-background smooth-hover text-xs font-light"
-                >
-                  Sitemap (XML)
-                </a>
-              </li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-sm font-medium mb-4">Fale conosco</h4>
             <div className="flex flex-col gap-2 mb-8">
+              <Link
+                to="/contato"
+                className="text-background/70 hover:text-background smooth-hover text-xs font-light flex items-center gap-2"
+              >
+                <Mail className="h-3 w-3" />
+                Formulário de Contato
+              </Link>
               <a
                 href="mailto:ola@worscoi.com"
                 className="text-background/70 hover:text-background smooth-hover text-xs font-light flex items-center gap-2"
@@ -115,7 +117,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-background/20 pt-8 mt-12 text-center text-background/50 text-xs font-light">
-          <p>&copy; 2026 Worscoi. Todos os direitos reservados.</p>
+          <p>&copy; 2026 Worsco. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

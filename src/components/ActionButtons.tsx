@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Download, Headphones, Share2, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import SaveButton from "./SaveButton";
+import ShareDialog from "./ShareDialog";
 import type { Content } from "@/hooks/useContents";
 import { useTrackInteraction } from "@/hooks/useContents";
 import { useCheckout } from "@/hooks/useCheckout";
@@ -19,18 +21,14 @@ interface ActionButtonsProps {
 
 /** Ler / Comprar / Ouvir / Download / Partilhar / Salvar */
 const ActionButtons = ({ item, readHref, readLabel = "Ler agora" }: ActionButtonsProps) => {
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const track = useTrackInteraction();
   const { checkout, isPending } = useCheckout();
   const { data: owned } = useOwnsContent(item.id);
   const isPaid = item.price_cents > 0;
 
-  const share = async () => {
-    const url = window.location.href;
-    if (navigator.share) await navigator.share({ title: item.title, url }).catch(() => undefined);
-    else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copiado");
-    }
+  const handleOpenShare = () => {
+    setIsShareOpen(true);
     track(item.id, "share");
   };
 
@@ -95,7 +93,7 @@ const ActionButtons = ({ item, readHref, readLabel = "Ler agora" }: ActionButton
           <Button
             variant="outline"
             className="rounded-md text-[11px] uppercase tracking-wider font-normal w-full"
-            onClick={share}
+            onClick={handleOpenShare}
           >
             <Share2 className="mr-2 h-3 w-3" />
             Partilhar
@@ -104,6 +102,13 @@ const ActionButtons = ({ item, readHref, readLabel = "Ler agora" }: ActionButton
 
         <SaveButton item={item} />
       </div>
+
+      <ShareDialog
+        open={isShareOpen}
+        onOpenChange={setIsShareOpen}
+        title={`${item.title} — Leitura Online na Worsco`}
+        text={item.description || `Leia "${item.title}" online na íntegra na Worsco.`}
+      />
     </div>
   );
 };

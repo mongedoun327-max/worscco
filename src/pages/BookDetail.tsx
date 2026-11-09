@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookOpen, ArrowLeft, ArrowRight, Check, Sparkles, Search, X, FileText, Download, Pencil } from "lucide-react";
-import { useState, useMemo } from "react";
+import { BookOpen, ArrowLeft, ArrowRight, Check, Sparkles, Search, X, FileText, Download, Pencil, Share2 } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/format";
 import { getOriginalPdfForBook, getDownloadPdfUrl } from "@/lib/originalPdfRegistry";
 import { CommunityReviews } from "@/components/CommunityReviews";
+import ShareDialog from "@/components/ShareDialog";
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -26,6 +27,25 @@ const BookDetail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [chapterSearch, setChapterSearch] = useState("");
   const [selectedRange, setSelectedRange] = useState<number | "all">("all");
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  // Dynamic SEO Synchronization
+  useEffect(() => {
+    if (!book) return;
+    const pageTitle = `${book.title} — ${book.author} | Worsco Livros`;
+    document.title = pageTitle;
+    const desc = book.description || `Leia "${book.title}" por ${book.author} online no navegador na Worsco.`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", desc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", desc);
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", pageTitle);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute("content", desc);
+  }, [book]);
 
   const originalPdf = useMemo(() => (id ? getOriginalPdfForBook(id) : undefined), [id]);
 
@@ -396,6 +416,15 @@ const BookDetail = () => {
               )}
 
               <Button
+                variant="outline"
+                onClick={() => setIsShareOpen(true)}
+                className="w-full mt-2.5 rounded-md text-[11px] uppercase tracking-wider font-normal gap-2 border-border"
+              >
+                <Share2 className="h-3.5 w-3.5 text-primary" />
+                Compartilhar Obra
+              </Button>
+
+              <Button
                 asChild
                 variant="ghost"
                 className="w-full mt-3 text-xs font-light text-muted-foreground"
@@ -409,6 +438,37 @@ const BookDetail = () => {
           </motion.div>
         </div>
       </main>
+
+      <ShareDialog
+        open={isShareOpen}
+        onOpenChange={setIsShareOpen}
+        title={`${book.title} — ${book.author} | Worsco Livros`}
+        text={book.description || `Confira a obra "${book.title}" para leitura online na Worsco.`}
+      />
+
+      {/* Schema.org Book Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Book",
+            name: book.title,
+            author: {
+              "@type": "Person",
+              name: book.author,
+            },
+            description: book.description,
+            image: book.cover_url || "https://worsco.vercel.app/og-image.jpg",
+            inLanguage: "pt-BR",
+            url: window.location.href,
+            publisher: {
+              "@type": "Organization",
+              name: "Worsco",
+            },
+          }),
+        }}
+      />
 
       <Footer />
     </div>

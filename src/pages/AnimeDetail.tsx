@@ -33,6 +33,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import ShareDialog from "@/components/ShareDialog";
 
 export const AnimeDetail = () => {
   useContentProtection();
@@ -51,6 +52,25 @@ export const AnimeDetail = () => {
   const [episodeSearch, setEpisodeSearch] = useState("");
   const [isPlayingTrailer, setIsPlayingTrailer] = useState(false);
   const [playerAnime, setPlayerAnime] = useState<Anime | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Dynamic SEO Synchronization
+  useEffect(() => {
+    if (!anime) return;
+    const pageTitle = `${anime.title} — Streaming de Anime & Mangá | Worsco`;
+    document.title = pageTitle;
+    const desc = anime.synopsis || `Assista ${anime.title} e leia mangás vinculados na plataforma Worsco.`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", desc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", desc);
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", pageTitle);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute("content", desc);
+  }, [anime]);
 
   // MangaDex & Multi-Source Live Chapter State
   const [onlineChapters, setOnlineChapters] = useState<MangaDexChapter[]>([]);
@@ -172,20 +192,7 @@ export const AnimeDetail = () => {
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: anime.title,
-          text: anime.synopsis,
-          url: window.location.href,
-        })
-        .catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copiado!", {
-        description: "O link deste anime foi copiado para a área de transferência.",
-      });
-    }
+    setIsShareModalOpen(true);
   };
 
   const handleSelectEpisodeAndScroll = (epNumber: number) => {
@@ -904,6 +911,34 @@ export const AnimeDetail = () => {
         onClose={() => {
           setPlayerAnime(null);
           setIsPlayingTrailer(false);
+        }}
+      />
+
+      <ShareDialog
+        open={isShareModalOpen}
+        onOpenChange={setIsShareModalOpen}
+        title={`${anime.title} — Streaming de Anime & Mangá | Worsco`}
+        text={anime.synopsis || `Assista ${anime.title} na plataforma Worsco.`}
+      />
+
+      {/* Schema.org TVSeries Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TVSeries",
+            name: anime.title,
+            description: anime.synopsis,
+            image: anime.cover || anime.banner || "https://worsco.vercel.app/og-image.jpg",
+            inLanguage: "pt-BR",
+            url: window.location.href,
+            genre: anime.genres,
+            publisher: {
+              "@type": "Organization",
+              name: "Worsco",
+            },
+          }),
         }}
       />
 

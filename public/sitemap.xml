@@ -62,6 +62,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://worsco.vercel.app/sobre</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/contato</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://worsco.vercel.app/termos</loc>
     <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -588,6 +600,126 @@
     <lastmod>2026-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/tv-aoc-e-boa-veja-5-modelos-para-comprar-em-2026-6835651499</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://files.tecnoblog.net/wp-content/uploads/2026/10/tv-aoc-guia.png</image:loc>
+      <image:title>TV AOC é boa? Veja 5 modelos para comprar em 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/apple-lanca-ios-27-2-1-e-atualiza-versoes-antigas-do-sistema-saiba-o-que-mu-5196114408</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.estadao.com.br/resizer/v2/X6C3MGOSLVHLDC6LFSRK77BIOI.png?quality=80&amp;auth=eeb90581f9f2c727b3c0da7340f0a684324d6baf4f2a67b38c8c8b134e8d10ce&amp;width=710</image:loc>
+      <image:title>Apple lança iOS 27.2.1 e atualiza versões antigas do sistema; saiba o que muda</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/data-centers-de-ia-recorrem-a-turbinas-usadas-para-garantir-fornecimento-de-8748888827</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.estadao.com.br/resizer/v2/CRHJHPHKE5A4BOXCVVMT6P5MT4.jpeg?quality=80&amp;auth=f0763cae57499d4604e678e15c3dac26ef61643650691303b53c48ad13454015&amp;width=710</image:loc>
+      <image:title>Data centers de IA recorrem a turbinas usadas para garantir fornecimento de energia</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/publico-brasileiro-de-animes-prefere-os-generos-de-comedia-e-drama-aponta-l-13519733822</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://i0.wp.com/www.jbox.com.br/wp/wp-content/uploads/2026/11/Aniquim-humor-destacada.jpg?ssl=1</image:loc>
+      <image:title>Público brasileiro de animês prefere os gêneros de comédia e drama, aponta levantamento</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/governo-eleva-tarifa-de-importacao-de-pneus-de-carros-de-16-para-30-8007318212</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://s2-g1.glbimg.com/_AFJbND-d50Wmo8NxbCKXrd-ZXs=/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/g/1/WfoUV8SfOiti8jhRsKJQ/continental.jpeg</image:loc>
+      <image:title>Governo eleva tarifa de importação de pneus de carros de 16% para 30%</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/minami-ke-ganha-teaser-da-5-temporada-e-confirma-estreia-para-abril-de-2027-11079297423</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.animeunited.com.br/wp-content/uploads/2026/11/image-31.png</image:loc>
+      <image:title>Minami-ke ganha teaser da 5ª temporada e confirma estreia para abril de 2027</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/download-de-gta-6-e-liberado-e-arquivos-revelam-pistas-sobre-multiplayer-e--20116251879</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.estadao.com.br/resizer/v2/CGIVO6KO25ATTAK6YAQ5HJQW34.jpg?quality=80&amp;auth=ea8ff9c2d54611794366025c04d2c55704447372dd20f47b6e4855bf1349d96c&amp;width=710</image:loc>
+      <image:title>Download de GTA 6 é liberado e arquivos revelam pistas sobre multiplayer e PS5 Pro</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/iberanime-matosinhos-2026-cosplay-world-masters-parte-1-4570912654</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.otakupt.com/wp-content/uploads/2026/11/IberAnime-Matosinhos-2026-COSPLAY-WORLD-MASTERS-Parte-1-Thumb.jpg</image:loc>
+      <image:title>IberAnime Matosinhos 2026 – COSPLAY WORLD MASTERS – Parte 1</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/google-lanca-novos-tpus-para-otimizar-tarefas-de-agentes-de-ia-e-melhorar-s-2120304959</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.estadao.com.br/resizer/v2/4W6XSQLRSRF3PMYG6YF4TAJVHA.jpg?quality=80&amp;auth=b1aa47c60450ec0604072f48047355454e05655721a768dea810f1317b2a0fcd&amp;width=710</image:loc>
+      <image:title>Google lança novos TPUs para otimizar tarefas de agentes de IA e melhorar segurança</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/google-apresenta-versoes-mais-potentes-de-seus-chips-de-ia-16446131791</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.youtube.com/embed/3Qw_CZkiQQg</image:loc>
+      <image:title>Google apresenta versões mais potentes de seus chips de IA</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/mpt-processa-bella-falconi-por-posts-que-sugeriam-contratar-e-manter-funcio-17350876042</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://s2-g1.glbimg.com/CCProvjgU6h88_A14v0v_zEfzho=/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2020/3/C/VXTDY1Ss2Oz90NXw3qGQ/bella-falconi.jpg</image:loc>
+      <image:title>MPT processa Bella Falconi por posts que sugeriam contratar e manter funcionários conforme suas opiniões políticas e pede R$ 5 milhões</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://worsco.vercel.app/noticias/em-manifesto-7-entidades-pedem-ao-governo-e-ao-congresso-eleitos-prioridade-2602864988</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://s2-g1.glbimg.com/5ZNF6AEXTX_cL5Rz5CWBctjgR60=/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/D/G/ROLPbPRkKUoYS0MStzBw/globo-canal-4-20260205-2000-frame-57603.jpeg</image:loc>
+      <image:title>Em manifesto, 7 entidades pedem ao governo e ao Congresso eleitos prioridade no combate a supersalários</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://worsco.vercel.app/noticias/home-office-55-vagas-para-trabalho-remoto-internacional-06-11-13063317669</loc>

@@ -19,6 +19,7 @@ import { formatDate } from "@/lib/format";
 import { toast } from "sonner";
 import { expandNewsToDeepReport, organizeIntoReadableParagraphs, EnrichedNews } from "@/lib/newsExpander";
 import { getSmartNewsCover } from "@/lib/newsImageResolver";
+import ShareDialog from "@/components/ShareDialog";
 
 const NewsArticle = () => {
   const { slug } = useParams();
@@ -30,6 +31,7 @@ const NewsArticle = () => {
 
   const [liveContent, setLiveContent] = useState<string | null>(null);
   const [liveCover, setLiveCover] = useState<string | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const attemptedUrlRef = useRef<string | null>(null);
 
   // Guarantee every article is upgraded to clean authentic reporting
@@ -37,6 +39,29 @@ const NewsArticle = () => {
     if (!rawArticle) return null;
     return expandNewsToDeepReport(rawArticle);
   }, [rawArticle]);
+
+  // Synchronize document title and OpenGraph metadata dynamically
+  useEffect(() => {
+    if (!article) return;
+    const pageTitle = `${article.title} — Worsco Notícias`;
+    document.title = pageTitle;
+
+    const desc = article.excerpt || article.title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", desc);
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", desc);
+
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", pageTitle);
+
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute("content", desc);
+  }, [article]);
 
   // Reset live content and cover on slug change
   useEffect(() => {
@@ -264,9 +289,9 @@ const NewsArticle = () => {
                 </svg>
               </button>
               <button
-                onClick={() => handleShare()}
+                onClick={() => setIsShareModalOpen(true)}
                 className="p-2 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
-                title="Copiar Link"
+                title="Opções de Compartilhamento"
               >
                 <Share2 className="h-3.5 w-3.5" />
               </button>
@@ -406,6 +431,51 @@ const NewsArticle = () => {
           </div>
         </article>
       </main>
+
+      <ShareDialog
+        open={isShareModalOpen}
+        onOpenChange={setIsShareModalOpen}
+        title={article.title}
+        text={article.excerpt || "Leia esta reportagem completa na Worsco:"}
+      />
+
+      {/* Schema.org NewsArticle Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: article.title,
+            image: [
+              liveCover ||
+                article.cover_url ||
+                "https://worsco.vercel.app/og-image.jpg",
+            ],
+            datePublished: article.published_at,
+            dateModified: article.published_at,
+            author: [
+              {
+                "@type": "Organization",
+                name: "Redação Worsco",
+              },
+            ],
+            publisher: {
+              "@type": "Organization",
+              name: "Worsco",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://worsco.vercel.app/favicon-512x512.png",
+              },
+            },
+            description: article.excerpt || article.title,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": window.location.href,
+            },
+          }),
+        }}
+      />
 
       <Footer />
     </div>

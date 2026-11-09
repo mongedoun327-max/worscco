@@ -31,6 +31,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import SiteMapPage from "./pages/SiteMapPage";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import CookieConsent from "./components/consent/CookieConsent";
 import TermsGate from "./components/consent/TermsGate";
 import CanonicalManager from "./components/CanonicalManager";
@@ -89,6 +91,9 @@ const App = () => (
           <Route path="/sitemap" element={<SiteMapPage />} />
           <Route path="/termos" element={<Terms />} />
           <Route path="/privacidade" element={<Privacy />} />
+          <Route path="/sobre" element={<About />} />
+          <Route path="/contato" element={<Contact />} />
+          <Route path="/contacto" element={<Contact />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

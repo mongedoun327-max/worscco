@@ -42,6 +42,8 @@ const Navigation = ({ variant = "default" }: NavigationProps) => {
     { label: "Webtoons", href: "/webtoons" },
     { label: "Animes", href: "/animes" },
     { label: "Notícias", href: "/noticias" },
+    { label: "Sobre", href: "/sobre" },
+    { label: "Contato", href: "/contato" },
     { label: user ? "Minha estante" : "Entrar", href: user ? "/biblioteca" : "/auth" },
   ];
 

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link, useParams } from "react-router-dom";
-import { BookOpen, ArrowRight, Eye, Heart, Check, Search, Filter, RefreshCw, Zap, Sparkles } from "lucide-react";
+import { BookOpen, ArrowRight, Eye, Heart, Check, Search, Filter, RefreshCw, Zap, Sparkles, Share2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ContentSection from "@/components/ContentSection";
@@ -10,6 +10,7 @@ import { useContent, useEpisodes, useProgress, useTrackInteraction } from "@/hoo
 import { useSimilar, useBecauseYouRead } from "@/hooks/useRecommendations";
 import { formatDate } from "@/lib/format";
 import { CommunityReviews } from "@/components/CommunityReviews";
+import ShareDialog from "@/components/ShareDialog";
 
 const CHUNK_SIZE = 50;
 
@@ -28,6 +29,25 @@ const WebtoonDetail = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedArc, setSelectedArc] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  // Dynamic SEO Synchronization
+  useEffect(() => {
+    if (!item) return;
+    const pageTitle = `${item.title} — Webtoon Online | Worsco`;
+    document.title = pageTitle;
+    const desc = item.description || `Leia o webtoon "${item.title}" em formato scroll vertical na íntegra na Worsco.`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", desc);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", desc);
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", pageTitle);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute("content", desc);
+  }, [item]);
 
   // Generate chunks (1-50, 51-100, etc.)
   const chunks = useMemo(() => {
@@ -176,17 +196,27 @@ const WebtoonDetail = () => {
               ))}
             </div>
 
-            {nextEpisode && (
+            <div className="flex items-center gap-3 mb-14 flex-wrap">
+              {nextEpisode && (
+                <Button
+                  asChild
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-md smooth-hover text-[11px] uppercase tracking-wider font-normal px-6"
+                >
+                  <Link to={`/webtoon/${item.id}/ep/${nextEpisode.id}`} onClick={() => track(item.id, "read")}>
+                    {progress?.episode_id ? "Continuar lendo" : "Começar a ler"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
               <Button
-                asChild
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-md smooth-hover text-[11px] uppercase tracking-wider font-normal mb-14 px-6"
+                variant="outline"
+                onClick={() => setIsShareOpen(true)}
+                className="rounded-md smooth-hover text-[11px] uppercase tracking-wider font-normal gap-2 border-border"
               >
-                <Link to={`/webtoon/${item.id}/ep/${nextEpisode.id}`} onClick={() => track(item.id, "read")}>
-                  {progress?.episode_id ? "Continuar lendo" : "Começar a ler"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                <Share2 className="h-3.5 w-3.5 text-primary" />
+                Compartilhar Webtoon
               </Button>
-            )}
+            </div>
 
             {episodes.length > 0 ? (
               <>
@@ -513,6 +543,34 @@ const WebtoonDetail = () => {
         title={`Porque você leu "${item.title}"`}
         items={because.filter((b) => !similar.some((s) => s.id === b.id))}
         showReason
+      />
+
+      <ShareDialog
+        open={isShareOpen}
+        onOpenChange={setIsShareOpen}
+        title={`${item.title} — Webtoon Online | Worsco`}
+        text={item.description || `Confira o webtoon "${item.title}" para leitura vertical na Worsco.`}
+      />
+
+      {/* Schema.org CreativeWorkSeries Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CreativeWorkSeries",
+            name: item.title,
+            description: item.description,
+            image: item.cover || "https://worsco.vercel.app/og-image.jpg",
+            inLanguage: "pt-BR",
+            url: window.location.href,
+            genre: item.category,
+            publisher: {
+              "@type": "Organization",
+              name: "Worsco",
+            },
+          }),
+        }}
       />
 
       <Footer />
