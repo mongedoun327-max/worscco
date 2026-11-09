@@ -231,10 +231,23 @@ export const useBooks = (search = "") =>
           }));
       } catch {}
 
+      // Fetch Cloud Books from Firestore
+      let cloudBooks: Book[] = [];
+      try {
+        const { fetchCloudBooks } = await import("@/lib/cloudEditorialService");
+        cloudBooks = await fetchCloudBooks();
+      } catch {}
+
       const map = new Map<string, Book>();
-      // Scientific Articles & Curricular Textbooks first, then Auto, Modern, Gutenberg, Original PDFs, DB
-      for (const b of sciBooks) map.set(b.id, b);
-      for (const b of currBooks) map.set(b.id, b);
+      // Custom Cloud Books from Admin first so they take top priority
+      for (const b of cloudBooks) map.set(b.id, b);
+      // Scientific Articles & Curricular Textbooks, Auto, Modern, Gutenberg, Original PDFs, DB
+      for (const b of sciBooks) {
+        if (!map.has(b.id)) map.set(b.id, b);
+      }
+      for (const b of currBooks) {
+        if (!map.has(b.id)) map.set(b.id, b);
+      }
       for (const b of autoBooks) {
         if (!map.has(b.id)) map.set(b.id, b);
       }
@@ -547,6 +560,13 @@ export const useChapters = (bookId?: string) =>
         }
       } catch {}
 
+      // Check Cloud Chapters from Firestore
+      try {
+        const { fetchCloudChapters } = await import("@/lib/cloudEditorialService");
+        const cloudChaps = await fetchCloudChapters(bookId);
+        if (cloudChaps && cloudChaps.length > 0) return cloudChaps;
+      } catch {}
+
       return [] as Chapter[];
     },
   });
@@ -568,6 +588,13 @@ export const useNews = () =>
         // Fallback if supabase connection is offline
       }
 
+      // Fetch Firestore Cloud news (manual admin publications)
+      let cloudNews: NewsItem[] = [];
+      try {
+        const { fetchCloudNews } = await import("@/lib/cloudEditorialService");
+        cloudNews = await fetchCloudNews();
+      } catch {}
+
       // Read cached news immediately and trigger background sync if empty
       let syndicated: any[] = [];
       let archivedItems: any[] = [];
@@ -587,11 +614,11 @@ export const useNews = () =>
 
       const validDbNews = dbNews.filter(Boolean);
 
-      // Merge and deduplicate by slug or title: Cloud DB + Syndicated + Permanent Archive
+      // Merge and deduplicate by slug or title: Firestore Cloud + Cloud DB + Syndicated + Permanent Archive
       const seen = new Set<string>();
       const combined: NewsItem[] = [];
 
-      for (const item of [...validDbNews, ...syndicated, ...archivedItems]) {
+      for (const item of [...cloudNews, ...validDbNews, ...syndicated, ...archivedItems]) {
         const key = (item.slug || item.title || "").toLowerCase().trim();
         if (key && !seen.has(key) && (item.title || "").trim().length > 0) {
           seen.add(key);

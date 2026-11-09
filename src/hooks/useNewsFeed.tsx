@@ -64,11 +64,18 @@ export const useNewsFeed = (filters: NewsFilters) =>
         // Fallback gracefully
       }
 
-      // 4. Merge & Deduplicate (Cloud DB + Syndicated + Permanent Archive)
+      // 3b. Fetch Firestore Cloud news (manual admin publications)
+      let cloudNews: NewsItem[] = [];
+      try {
+        const { fetchCloudNews } = await import("@/lib/cloudEditorialService");
+        cloudNews = await fetchCloudNews();
+      } catch {}
+
+      // 4. Merge & Deduplicate (Firestore Cloud + Supabase DB + Syndicated + Permanent Archive)
       const seen = new Set<string>();
       let all: NewsItem[] = [];
 
-      for (const item of [...dbNews, ...syndicated, ...archiveItems]) {
+      for (const item of [...cloudNews, ...dbNews, ...syndicated, ...archiveItems]) {
         const key = (item.slug || item.title || "").toLowerCase().trim();
         if (key && !seen.has(key) && (item.title || "").trim().length > 0) {
           seen.add(key);

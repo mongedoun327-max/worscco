@@ -1,5 +1,16 @@
 import type { Book, Chapter, NewsItem } from "@/hooks/useCatalog";
 import { getSmartNewsCover } from "@/lib/newsImageResolver";
+import {
+  publishNewsToCloud,
+  deleteNewsFromCloud,
+  publishBookToCloud,
+  deleteBookFromCloud,
+  publishChapterToCloud,
+  publishAnimeOverrideToCloud,
+  fetchCloudNews,
+  fetchCloudBooks,
+  fetchCloudAnimeOverrides,
+} from "./cloudEditorialService";
 
 export const SPECIAL_ADMIN_EMAIL = "miguelworscoi@gmail.com";
 export const SPECIAL_ADMIN_PASS = "004116";
@@ -15,6 +26,77 @@ const CUSTOM_CHAPTERS_KEY = "worscoi_editorial_custom_chapters_v1";
 const DELETED_BOOKS_KEY = "worscoi_editorial_deleted_books_v1";
 
 const ANIME_OVERRIDES_KEY = "worscoi_editorial_anime_overrides_v1";
+
+let isCloudSyncing = false;
+export async function initCloudEditorialSync(): Promise<void> {
+  if (typeof window === "undefined" || isCloudSyncing) return;
+  isCloudSyncing = true;
+  try {
+    const [cloudNews, cloudBooks, cloudAnimes] = await Promise.all([
+      fetchCloudNews(),
+      fetchCloudBooks(),
+      fetchCloudAnimeOverrides(),
+    ]);
+
+    let changed = false;
+
+    if (cloudNews && cloudNews.length > 0) {
+      const customList = getCustomNewsPublications();
+      const overrides = getNewsOverrides();
+      for (const cn of cloudNews) {
+        overrides[cn.id] = cn;
+        if (cn.slug) overrides[cn.slug] = cn;
+        const idx = customList.findIndex((c) => c.id === cn.id || c.slug === cn.slug);
+        if (idx >= 0) {
+          customList[idx] = cn;
+        } else {
+          customList.unshift(cn);
+        }
+      }
+      safeWriteJson(NEWS_OVERRIDES_KEY, overrides);
+      safeWriteJson(CUSTOM_NEWS_KEY, customList);
+      changed = true;
+    }
+
+    if (cloudBooks && cloudBooks.length > 0) {
+      const customBooks = getCustomBooks();
+      const overrides = getBookOverrides();
+      for (const cb of cloudBooks) {
+        overrides[cb.id] = cb;
+        const idx = customBooks.findIndex((b) => b.id === cb.id);
+        if (idx >= 0) {
+          customBooks[idx] = cb;
+        } else {
+          customBooks.unshift(cb);
+        }
+      }
+      safeWriteJson(BOOK_OVERRIDES_KEY, overrides);
+      safeWriteJson(CUSTOM_BOOKS_KEY, customBooks);
+      changed = true;
+    }
+
+    if (cloudAnimes && Object.keys(cloudAnimes).length > 0) {
+      const overrides = getAnimeOverrides();
+      for (const aId of Object.keys(cloudAnimes)) {
+        overrides[aId] = { ...(overrides[aId] || {}), ...cloudAnimes[aId] };
+      }
+      safeWriteJson(ANIME_OVERRIDES_KEY, overrides);
+      changed = true;
+    }
+
+    if (changed) {
+      window.dispatchEvent(new Event("worscoi_editorial_updated"));
+    }
+  } catch (err) {
+    console.warn("[EditorialStore] Cloud initial sync warning:", err);
+  } finally {
+    isCloudSyncing = false;
+  }
+}
+
+if (typeof window !== "undefined") {
+  void initCloudEditorialSync();
+}
 
 function safeReadJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -278,6 +360,9 @@ export function saveNewsPublication(
   );
   safeWriteJson(DELETED_NEWS_KEY, deleted);
 
+  // Sync with Firestore Cloud immediately so all users receive the publication
+  void publishNewsToCloud(fullItem);
+
   return fullItem;
 }
 
@@ -293,6 +378,9 @@ export function deleteNewsPublication(idOrSlug: string): void {
     (c) => c.id !== clean && c.slug !== clean
   );
   safeWriteJson(CUSTOM_NEWS_KEY, customList);
+
+  // Mark deleted/unpublished in Firestore Cloud
+  void deleteNewsFromCloud(clean);
 }
 
 // ============================================================================
@@ -872,6 +960,9 @@ export function saveBookPublication(
   const deleted = getDeletedBookIds().filter((d) => d !== id);
   safeWriteJson(DELETED_BOOKS_KEY, deleted);
 
+  // Sync book to Firestore Cloud so all users see it immediately
+  void publishBookToCloud(fullBook);
+
   return fullBook;
 }
 
@@ -883,6 +974,9 @@ export function deleteBookPublication(id: string): void {
   }
   const customBooks = getCustomBooks().filter((b) => b.id !== id);
   safeWriteJson(CUSTOM_BOOKS_KEY, customBooks);
+
+  // Mark book deleted in Firestore Cloud
+  void deleteBookFromCloud(id);
 }
 
 export function getCustomBookChapters(bookId: string): Chapter[] {
@@ -921,6 +1015,10 @@ export function saveCustomBookChapter(input: {
   list.sort((a, b) => a.position - b.position);
   all[input.book_id] = list;
   safeWriteJson(CUSTOM_CHAPTERS_KEY, all);
+
+  // Sync chapter to Firestore Cloud
+  void publishChapterToCloud(chapter);
+
   return chapter;
 }
 
@@ -940,6 +1038,9 @@ export function saveAnimeEditorialOverride(animeId: string, patch: Record<string
     updatedAt: new Date().toISOString(),
   };
   safeWriteJson(ANIME_OVERRIDES_KEY, overrides);
+
+  // Sync anime override to Firestore Cloud
+  void publishAnimeOverrideToCloud(animeId, patch);
 }
 
 export function getAnimeWithEditorialOverride<T extends { id: string }>(anime: T): T {

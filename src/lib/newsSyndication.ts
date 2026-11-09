@@ -12,7 +12,7 @@ export interface SyndicatedNewsItem extends NewsItem {
 
 const STORAGE_KEY = "worscoi_syndicated_news_v12";
 const LAST_SYNC_KEY = "worscoi_news_last_sync_v12";
-const SYNC_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes cache TTL
+const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes cache TTL for fresh continuous updates
 
 let inflightSyncPromise: Promise<SyndicatedNewsItem[]> | null = null;
 
@@ -103,14 +103,17 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
 
   const allItems: SyndicatedNewsItem[] = [];
 
-  // Call the Vite server /api/news/feed endpoint in parallel
+  // 1. Try server /api/news/feed endpoint first
   try {
     const fetchPromises = topics.map(async (t) => {
       try {
         const res = await fetch(`/api/news/feed?topic=${t.topic}&limit=${t.limit}`);
         if (res.ok) {
-          const data = await res.json();
-          return (Array.isArray(data.items) ? data.items : []) as SyndicatedNewsItem[];
+          const contentType = res.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
+            const data = await res.json();
+            return (Array.isArray(data.items) ? data.items : []) as SyndicatedNewsItem[];
+          }
         }
       } catch {
         return [] as SyndicatedNewsItem[];
@@ -131,32 +134,61 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
       }
     }
   } catch {
-    // Fallback if endpoint fails
+    // Continue to client-side live fetcher
   }
 
-      if (allItems.length > 0) {
-        // Sort most recent first
-        allItems.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
-        setCachedNews(allItems);
-        return allItems;
+  // 2. If server endpoint returned empty (e.g. running on static Vercel hosting), fetch directly from live RSS!
+  if (allItems.length === 0) {
+    try {
+      const { fetchLiveNewsDirectFromRss } = await import("./liveNewsFetcher");
+      const liveRssItems = await fetchLiveNewsDirectFromRss(14);
+      if (liveRssItems.length > 0) {
+        allItems.push(...(liveRssItems as SyndicatedNewsItem[]));
       }
-
-      // Live site / client fallback: populate from the rich built-in archive
-      try {
-        const { getLocalArchiveArticles } = await import("./newsArchiveEngine");
-        const local = await getLocalArchiveArticles();
-        if (Array.isArray(local) && local.length > 0) {
-          const fallbackFeed = local.slice(0, 150).map((it) => expandNewsToDeepReport(it));
-          setCachedNews(fallbackFeed);
-          return fallbackFeed;
-        }
-      } catch {}
-
-      return cached;
-    } finally {
-      inflightSyncPromise = null;
+    } catch (err) {
+      console.warn("[NewsSyndication] Direct live RSS fetch fallback encountered:", err);
     }
-  })();
+  }
 
-  return inflightSyncPromise;
+  // 3. Also merge any manual news publications from Firestore Cloud
+  try {
+    const { fetchCloudNews } = await import("./cloudEditorialService");
+    const cloudItems = await fetchCloudNews();
+    if (cloudItems.length > 0) {
+      for (const c of cloudItems) {
+        const key = (c.title || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (!allItems.some((it) => (it.title || "").toLowerCase().replace(/[^a-z0-9]/g, "") === key)) {
+          allItems.unshift(c as SyndicatedNewsItem);
+        }
+      }
+    }
+  } catch (err) {
+    // Ignore if offline
+  }
+
+  if (allItems.length > 0) {
+    // Sort most recent first
+    allItems.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+    setCachedNews(allItems);
+    return allItems;
+  }
+
+  // 4. Ultimate fallback: static archive
+  try {
+    const { getLocalArchiveArticles } = await import("./newsArchiveEngine");
+    const local = await getLocalArchiveArticles();
+    if (Array.isArray(local) && local.length > 0) {
+      const fallbackFeed = local.slice(0, 150).map((it) => expandNewsToDeepReport(it));
+      setCachedNews(fallbackFeed);
+      return fallbackFeed;
+    }
+  } catch {}
+
+  return cached;
+} finally {
+  inflightSyncPromise = null;
+}
+})();
+
+return inflightSyncPromise;
 }

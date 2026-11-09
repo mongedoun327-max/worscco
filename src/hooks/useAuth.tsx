@@ -7,6 +7,8 @@ import {
   logoutSpecialAdmin,
 } from "@/lib/editorialStore";
 
+const ADMIN_EMAILS = ["miguelworscoi@gmail.com", "mongedoun327@gmail.com"];
+
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(() => (getSpecialAdminUser() as unknown as User) ?? null);
   const [session, setSession] = useState<Session | null>(null);
@@ -37,7 +39,8 @@ export const useAuth = () => {
     }
 
     const checkRole = (userId: string | undefined, email?: string) => {
-      if (isSpecialAdminLoggedIn() || email?.toLowerCase() === "miguelworscoi@gmail.com") {
+      const cleanEmail = (email || "").trim().toLowerCase();
+      if (isSpecialAdminLoggedIn() || ADMIN_EMAILS.includes(cleanEmail)) {
         setIsAdmin(true);
         return;
       }

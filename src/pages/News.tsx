@@ -51,7 +51,15 @@ const News = () => {
       setTimeline(res.timeline || []);
       setTotalArchived(res.totalArticles || 0);
     });
-  }, []);
+
+    // Check for fresh live RSS and cloud updates on mount
+    void syncDailyNews().then((fresh) => {
+      if (fresh && fresh.length > 0) {
+        void queryClient.invalidateQueries({ queryKey: ["news-feed"] });
+        void queryClient.invalidateQueries({ queryKey: ["news"] });
+      }
+    });
+  }, [queryClient]);
 
   const category = params.get("categoria") ?? "all";
   const order = (params.get("ordem") as "recent" | "oldest") ?? "recent";
