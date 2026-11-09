@@ -141,6 +141,17 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
         return allItems;
       }
 
+      // Live site / client fallback: populate from the rich built-in archive
+      try {
+        const { getLocalArchiveArticles } = await import("./newsArchiveEngine");
+        const local = await getLocalArchiveArticles();
+        if (Array.isArray(local) && local.length > 0) {
+          const fallbackFeed = local.slice(0, 150).map((it) => expandNewsToDeepReport(it));
+          setCachedNews(fallbackFeed);
+          return fallbackFeed;
+        }
+      } catch {}
+
       return cached;
     } finally {
       inflightSyncPromise = null;

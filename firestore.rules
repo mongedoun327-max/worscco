@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidNews(data) {
+      return data.keys().hasAll(['title', 'slug', 'content', 'published']) &&
+        data.title is string && data.title.size() <= 300 &&
+        data.slug is string && data.slug.size() <= 150 &&
+        data.content is string && data.content.size() <= 50000 &&
+        data.published is bool;
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Test connection doc
+    match /test/{testId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // News articles: Publicly readable by all visitors and users everywhere
+    match /news/{newsId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isValidId(newsId) && isValidNews(incoming());
+      allow update: if isSignedIn() && isValidId(newsId) && isValidNews(incoming());
+      allow delete: if isSignedIn() && isValidId(newsId);
+    }
+  }
+}

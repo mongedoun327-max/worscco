@@ -30,8 +30,10 @@ import PurchaseCancelled from "./pages/PurchaseCancelled";
 import ResetPassword from "./pages/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import SiteMapPage from "./pages/SiteMapPage";
 import CookieConsent from "./components/consent/CookieConsent";
 import TermsGate from "./components/consent/TermsGate";
+import CanonicalManager from "./components/CanonicalManager";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +54,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <CanonicalManager />
         <CookieConsent />
         <TermsGate />
         <Routes>
@@ -82,6 +85,8 @@ const App = () => (
           <Route path="/compra/sucesso" element={<PurchaseSuccess />} />
           <Route path="/compra/cancelada" element={<PurchaseCancelled />} />
           <Route path="/redefinir-senha" element={<ResetPassword />} />
+          <Route path="/mapa-do-site" element={<SiteMapPage />} />
+          <Route path="/sitemap" element={<SiteMapPage />} />
           <Route path="/termos" element={<Terms />} />
           <Route path="/privacidade" element={<Privacy />} />
 

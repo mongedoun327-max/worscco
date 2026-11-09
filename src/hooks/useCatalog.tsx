@@ -585,17 +585,15 @@ export const useNews = () =>
         archivedItems = archiveResult.items || [];
       } catch {}
 
-      const validDbNews = dbNews.filter(
-        (n) => (n.content || "").length >= 300 && !n.cover_url?.startsWith("/covers/")
-      );
+      const validDbNews = dbNews.filter(Boolean);
 
-      // Merge and deduplicate by slug or title (archivedItems first for enriched content & covers)
+      // Merge and deduplicate by slug or title: Cloud DB + Syndicated + Permanent Archive
       const seen = new Set<string>();
       const combined: NewsItem[] = [];
 
-      for (const item of [...archivedItems, ...syndicated, ...validDbNews]) {
-        const key = (item.slug || item.title || "").toLowerCase();
-        if (!seen.has(key) && (item.content || "").length >= 200) {
+      for (const item of [...validDbNews, ...syndicated, ...archivedItems]) {
+        const key = (item.slug || item.title || "").toLowerCase().trim();
+        if (key && !seen.has(key) && (item.title || "").trim().length > 0) {
           seen.add(key);
           combined.push(item);
         }

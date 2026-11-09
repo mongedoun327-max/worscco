@@ -5,6 +5,7 @@ import { defineConfig, Plugin } from 'vite';
 import Parser from 'rss-parser';
 import { generateBookPdf } from './src/lib/pdfGenerator';
 import { ORIGINAL_PDF_REGISTRY, getOriginalPdfForBook } from './src/lib/originalPdfRegistry';
+import { buildSitemapXml } from './scripts/generate_sitemap.js';
 
 function newsRssPlugin(): Plugin {
   const parser = new Parser({
@@ -2480,32 +2481,60 @@ function officialWebtoonIntegrationPlugin(): Plugin {
 }
 
 function sitemapPlugin(): Plugin {
+  const dynamicCache = new Map<string, { xml: string; time: number }>();
+
   return {
     name: 'worscoi-sitemap-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const urlPath = (req.url || '').split('?')[0];
         if (urlPath === '/sitemap.xml') {
-          const sitemapPath = path.resolve(__dirname, 'public/sitemap.xml');
-          if (fs.existsSync(sitemapPath)) {
-            const xml = fs.readFileSync(sitemapPath, 'utf-8');
+          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worscoi.com') as string;
+          const host = rawHost.split(',')[0].trim();
+          const proto = (req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https')) as string;
+          const origin = `${proto}://${host}`;
+
+          const cached = dynamicCache.get(origin);
+          if (cached && Date.now() - cached.time < 3600000) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            res.end(cached.xml);
+            return;
+          }
+
+          try {
+            const { xml } = buildSitemapXml(origin);
+            dynamicCache.set(origin, { xml, time: Date.now() });
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/xml; charset=utf-8');
             res.setHeader('Cache-Control', 'public, max-age=3600');
             res.end(xml);
             return;
+          } catch {
+            const sitemapPath = path.resolve(__dirname, 'public/sitemap.xml');
+            if (fs.existsSync(sitemapPath)) {
+              const xml = fs.readFileSync(sitemapPath, 'utf-8');
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+              res.setHeader('Cache-Control', 'public, max-age=3600');
+              res.end(xml);
+              return;
+            }
           }
         }
         if (urlPath === '/robots.txt') {
-          const robotsPath = path.resolve(__dirname, 'public/robots.txt');
-          if (fs.existsSync(robotsPath)) {
-            const txt = fs.readFileSync(robotsPath, 'utf-8');
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-            res.setHeader('Cache-Control', 'public, max-age=3600');
-            res.end(txt);
-            return;
-          }
+          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worscoi.com') as string;
+          const host = rawHost.split(',')[0].trim();
+          const proto = (req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https')) as string;
+          const origin = `${proto}://${host}`;
+
+          const robotsContent = `User-agent: Googlebot\nAllow: /\n\nUser-agent: Bingbot\nAllow: /\n\nUser-agent: Twitterbot\nAllow: /\n\nUser-agent: facebookexternalhit\nAllow: /\n\nUser-agent: *\nAllow: /\n\n# Sitemap Oficial Dinâmico\nSitemap: ${origin}/sitemap.xml\n`;
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+          res.setHeader('Cache-Control', 'public, max-age=3600');
+          res.end(robotsContent);
+          return;
         }
         next();
       });

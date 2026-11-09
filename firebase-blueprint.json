@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "news": {
+      "title": "News Item",
+      "description": "Journalistic article or news piece published on Worscoi",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "slug": { "type": "string", "maxLength": 150 },
+        "excerpt": { "type": "string", "maxLength": 1000 },
+        "content": { "type": "string", "maxLength": 50000 },
+        "cover_url": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 100 },
+        "published": { "type": "boolean" },
+        "published_at": { "type": "string", "maxLength": 100 },
+        "created_at": { "type": "string", "maxLength": 100 },
+        "author": { "type": "string", "maxLength": 150 },
+        "source_name": { "type": "string", "maxLength": 150 },
+        "source_url": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["title", "slug", "content", "published"]
+    },
+    "test_connection": {
+      "title": "Test Connection",
+      "description": "Used by app startup to verify Firestore connectivity",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "maxLength": 50 }
+      }
+    }
+  },
+  "firestore": {
+    "/news/{newsId}": {
+      "schema": "news",
+      "description": "Collection of all published and editorial news articles"
+    },
+    "/test/{testId}": {
+      "schema": "test_connection",
+      "description": "Collection used for connectivity verification"
+    }
+  }
+}
