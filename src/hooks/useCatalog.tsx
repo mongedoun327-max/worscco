@@ -602,7 +602,7 @@ export const useNews = () =>
         const { syncDailyNews, getCachedNews } = await import("@/lib/newsSyndication");
         syndicated = getCachedNews();
         if (!syndicated || syndicated.length === 0) {
-          void syncDailyNews();
+          syndicated = await syncDailyNews();
         }
       } catch {}
 

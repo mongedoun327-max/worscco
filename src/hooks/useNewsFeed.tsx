@@ -24,12 +24,12 @@ export const useNewsFeed = (filters: NewsFilters) =>
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
     queryFn: async ({ pageParam = 0 }) => {
-      // 1. Read cached syndicated news immediately and trigger non-blocking refresh if empty
+      // 1. Read cached syndicated news immediately and fetch fresh if empty
       let syndicated: NewsItem[] = [];
       try {
         syndicated = getCachedNews();
         if (syndicated.length === 0) {
-          void syncDailyNews();
+          syndicated = await syncDailyNews();
         }
       } catch {
         syndicated = [];

@@ -1,5 +1,6 @@
 import type { NewsItem } from "@/hooks/useCatalog";
 import { expandNewsToDeepReport } from "./newsExpander";
+import { getSmartNewsCover, isValidCoverUrl } from "./newsImageResolver";
 
 export interface SyndicatedNewsItem extends NewsItem {
   source_name?: string;
@@ -10,9 +11,9 @@ export interface SyndicatedNewsItem extends NewsItem {
   key_takeaways?: string[];
 }
 
-const STORAGE_KEY = "worscoi_syndicated_news_v12";
-const LAST_SYNC_KEY = "worscoi_news_last_sync_v12";
-const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes cache TTL for fresh continuous updates
+const STORAGE_KEY = "worscoi_syndicated_news_v14";
+const LAST_SYNC_KEY = "worscoi_news_last_sync_v14";
+const SYNC_INTERVAL_MS = 3 * 60 * 1000; // 3 minutes cache TTL for fresh continuous updates
 
 let inflightSyncPromise: Promise<SyndicatedNewsItem[]> | null = null;
 
@@ -20,7 +21,7 @@ let inflightSyncPromise: Promise<SyndicatedNewsItem[]> | null = null;
 const clearLegacyCache = () => {
   if (typeof window === "undefined") return;
   try {
-    for (let i = 1; i <= 11; i++) {
+    for (let i = 1; i <= 13; i++) {
       localStorage.removeItem(`worscoi_syndicated_news_v${i}`);
       localStorage.removeItem(`worscoi_news_last_sync_v${i}`);
     }
@@ -37,7 +38,13 @@ export const getCachedNews = (): SyndicatedNewsItem[] => {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.map((item) => expandNewsToDeepReport(item));
+      return parsed.map((item) => {
+        const enriched = expandNewsToDeepReport(item);
+        if (!isValidCoverUrl(enriched.cover_url)) {
+          enriched.cover_url = getSmartNewsCover(enriched.title, enriched.category);
+        }
+        return enriched;
+      });
     }
     return [];
   } catch {
@@ -102,6 +109,7 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
   ];
 
   const allItems: SyndicatedNewsItem[] = [];
+  const seen = new Set<string>();
 
   // 1. Try server /api/news/feed endpoint first
   try {
@@ -122,13 +130,15 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
     });
 
     const results = await Promise.all(fetchPromises);
-    const seen = new Set<string>();
 
     for (const batch of results) {
       for (const item of batch) {
         const key = (item.title || "").toLowerCase().replace(/[^a-z0-9]/g, "");
         if (!seen.has(key) && key.length > 5) {
           seen.add(key);
+          if (!isValidCoverUrl(item.cover_url)) {
+            item.cover_url = getSmartNewsCover(item.title, item.category);
+          }
           allItems.push(item);
         }
       }
@@ -137,13 +147,20 @@ export async function syncDailyNews(force = false): Promise<SyndicatedNewsItem[]
     // Continue to client-side live fetcher
   }
 
-  // 2. If server endpoint returned empty (e.g. running on static Vercel hosting), fetch directly from live RSS!
-  if (allItems.length === 0) {
+  // 2. If server endpoint returned empty or low count (e.g. running on static Vercel hosting), fetch directly from live RSS!
+  if (allItems.length < 15) {
     try {
       const { fetchLiveNewsDirectFromRss } = await import("./liveNewsFetcher");
       const liveRssItems = await fetchLiveNewsDirectFromRss(14);
-      if (liveRssItems.length > 0) {
-        allItems.push(...(liveRssItems as SyndicatedNewsItem[]));
+      for (const liveItem of liveRssItems) {
+        const key = (liveItem.title || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (!seen.has(key) && key.length > 5) {
+          seen.add(key);
+          if (!isValidCoverUrl(liveItem.cover_url)) {
+            liveItem.cover_url = getSmartNewsCover(liveItem.title, liveItem.category);
+          }
+          allItems.push(liveItem as SyndicatedNewsItem);
+        }
       }
     } catch (err) {
       console.warn("[NewsSyndication] Direct live RSS fetch fallback encountered:", err);
