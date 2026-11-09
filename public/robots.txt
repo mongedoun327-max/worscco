@@ -13,5 +13,5 @@ Allow: /
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://worscoi.com/sitemap.xml
+# Sitemap Oficial
+Sitemap: https://worsco.vercel.app/sitemap.xml

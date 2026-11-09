@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const BASE_URL = process.env.VITE_APP_URL || process.env.APP_URL || 'https://worscoi.com';
+const BASE_URL = process.env.VITE_APP_URL || 'https://worsco.vercel.app';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const STATIC_ROUTES = [

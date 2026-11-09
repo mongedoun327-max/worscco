@@ -2489,7 +2489,7 @@ function sitemapPlugin(): Plugin {
       server.middlewares.use((req, res, next) => {
         const urlPath = (req.url || '').split('?')[0];
         if (urlPath === '/sitemap.xml') {
-          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worscoi.com') as string;
+          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worsco.vercel.app') as string;
           const host = rawHost.split(',')[0].trim();
           const proto = (req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https')) as string;
           const origin = `${proto}://${host}`;
@@ -2524,7 +2524,7 @@ function sitemapPlugin(): Plugin {
           }
         }
         if (urlPath === '/robots.txt') {
-          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worscoi.com') as string;
+          const rawHost = (req.headers['x-forwarded-host'] || req.headers.host || 'worsco.vercel.app') as string;
           const host = rawHost.split(',')[0].trim();
           const proto = (req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https')) as string;
           const origin = `${proto}://${host}`;

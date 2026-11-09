@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-11-06T21:09:19.632Z",
+  "lastSync": "2026-11-09T00:20:18.267Z",
   "frequencyMinutes": 30,
   "isActive": true,
   "autoSources": {
@@ -8,6 +8,12 @@
     "curatedQueue": true
   },
   "logs": [
+    {
+      "id": "log-1794183618267",
+      "timestamp": "2026-11-09T00:20:18.267Z",
+      "level": "success",
+      "message": "[Automação] Livro \"Discurso do Método\" por René Descartes importado com sucesso (5 capítulos)."
+    },
     {
       "id": "log-1793999359632",
       "timestamp": "2026-11-06T21:09:19.632Z",
@@ -41,13 +47,6 @@
   ],
   "queue": [
     {
-      "id": "queue-4",
-      "title": "Discurso do Método",
-      "author": "René Descartes",
-      "category": "Filosofia e Estoicismo",
-      "priority": "media"
-    },
-    {
       "id": "queue-5",
       "title": "Inteligência Emocional",
       "author": "Daniel Goleman",
@@ -63,6 +62,73 @@
     }
   ],
   "books": [
+    {
+      "id": "auto-discurso-do-metodo-8266",
+      "title": "Discurso do Método",
+      "subtitle": "Importado Automaticamente · Filosofia e Estoicismo",
+      "author": "René Descartes",
+      "description": "Obra fundamental de Filosofia e Estoicismo por René Descartes. Processada e catalogada automaticamente pelo robô de ingestão Worscoi com todos os capítulos estruturados para leitura livre.",
+      "cover_url": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=1200&auto=format&fit=crop&q=80",
+      "category": "Filosofia e Estoicismo",
+      "price_cents": 0,
+      "currency": "BRL",
+      "published": true,
+      "featured": true,
+      "created_at": "2026-11-09T00:20:18.267Z",
+      "downloads": 6628,
+      "rating": 4.9,
+      "rating_count": 477,
+      "formats": [
+        "Leitura Online",
+        "EPUB",
+        "TXT"
+      ],
+      "read_time": 260,
+      "source": "Automação Worscoi (Pipeline Inteligente)",
+      "is_automated": true,
+      "chapters": [
+        {
+          "id": "chap-auto-discurso-do-metodo-8266-1",
+          "book_id": "auto-discurso-do-metodo-8266",
+          "position": 1,
+          "title": "Primeira Parte — Considerações a Respeito das Ciências e a Busca do Saber",
+          "content": "O bom senso é a coisa mais bem partilhada do mundo, pois cada qual pensa estar tão bem provido dele que mesmo os mais difíceis de contentar em qualquer outra coisa não costumam desejar mais do que têm.\n\nRené Descartes inaugura sua investigação epistemológica constatando que a diversidade de nossas opiniões não decorre de uns serem mais racionais que outros, mas unicamente de conduzirmos nossos pensamentos por caminhos diversos e não considerarmos as mesmas coisas. Não basta ter o espírito bom; o principal é aplicá-lo bem.\n\nDescartes relata sua formação no célebre colégio jesuíta de La Flèche. Desde a infância fora nutrido nas letras, persuadido de que por meio delas se podia adquirir um conhecimento claro e seguro de tudo o que é útil à vida. Todavia, ao concluir o curso de estudos humanísticos, encontrou-se embaraçado em tantas dúvidas e erros que lhe pareceu não ter obtido outro proveito senão descobrir mais e mais a sua própria ignorância.\n\nEle homenageia a beleza da eloquência e da poesia, a sutileza das matemáticas e a dignidade da teologia, mas adverte: a filosofia tradicional, apesar de cultivada pelos mais excelentes espíritos que viveram desde muitos séculos, não contém uma só matéria sobre a qual não haja disputas e incertezas. Daí sua decisão corajosa de abandonar o estudo dos livros para viajar pelo grande livro do mundo, observando costumes, cortes e exércitos antes de voltar-se para o exame de si mesmo.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-discurso-do-metodo-8266-2",
+          "book_id": "auto-discurso-do-metodo-8266",
+          "position": 2,
+          "title": "Segunda Parte — As Quatro Regras Fundamentais do Método Cartesiano",
+          "content": "Estando na Alemanha por ocasião do início da Guerra dos Trinta Anos, recolhido em um aposento aquecido por uma estufa, Descartes concebeu a ideia de que as obras compostas por vários mestres são quase sempre menos perfeitas do que aquelas edificadas pelo trabalho de um único arquiteto.\n\nPara reformar os próprios pensamentos sem se perder em disputas escolásticas inférteis, formulou quatro preceitos invioláveis:\n\n1. **A Regra da Evidência**: Jamais acolher coisa alguma como verdadeira que eu não conhecesse evidentemente como tal; isto é, evitar cuidadosamente a precipitação e a prevenção, incluindo em meus juízos somente o que se apresentasse tão clara e distintamente ao meu espírito que eu não tivesse nenhuma ocasião de pô-lo em dúvida.\n\n2. **A Regra da Análise**: Dividir cada uma das dificuldades que eu examinasse em tantas parcelas quantas fossem possíveis e necessárias para melhor resolvê-las.\n\n3. **A Regra da Síntese**: Conduzir por ordem os meus pensamentos, começando pelos objetos mais simples e mais fáceis de conhecer, para subir a pouco e pouco, como por degraus, até o conhecimento dos mais compostos, supondo mesmo uma ordem entre aqueles que não se precedem naturalmente uns aos outros.\n\n4. **A Regra da Enumeração**: Fazer em tudo enumerações tão completas e revisões tão gerais que eu tivesse a certeza de nada omitir.\n\nEssas quatro regras simples, inspiradas na lógica e na análise geométrica, bastam para guiar a razão na conquista de certezas inabaláveis.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-discurso-do-metodo-8266-3",
+          "book_id": "auto-discurso-do-metodo-8266",
+          "position": 3,
+          "title": "Terceira Parte — A Moral Provisória para Navegar a Vida Prática",
+          "content": "Antes de demolir a velha habitação de suas opiniões para reconstruí-la sobre alicerces firmes, Descartes sentiu a necessidade imperiosa de estabelecer uma **Moral Provisória**, a fim de não permanecer irresoluto e hesitante em suas ações diárias enquanto a razão o obrigasse a sê-lo em seus juízos.\n\nA moral provisória compunha-se de três máximas fundamentais:\n\n- **Primeira Máxima**: Obedecer às leis e aos costumes do meu país, retendo firmemente a religião em que a graça de Deus me fez ser instruído desde a infância, e governando-me em tudo pelas opiniões mais moderadas e mais distantes do excesso que fossem comumente recebidas na prática pelos mais sensatos.\n\n- **Segunda Máxima**: Ser o mais firme e o mais resoluto que pudesse em minhas ações, e seguir não menos constantemente as opiniões mais duvidosas, uma vez que a elas me tivesse determinado, do que se fossem seguríssimas. Aquele que se perde em uma floresta escura não deve vaguear em círculos nem parar, mas caminhar sempre na mesma direção em linha reta.\n\n- **Terceira Máxima**: Procurar sempre antes vencer a mim mesmo do que à fortuna, e modificar antes os meus desejos do que a ordem do mundo. Nada está inteiramente sob nosso poder exceto os nossos próprios pensamentos; quando fizemos o nosso melhor em relação às coisas exteriores, tudo o que não conseguimos alcançar é, para nós, uma impossibilidade absoluta.\n\nCultivando tais máximas, Descartes assegurou a serenidade necessária para consagrar toda a sua existência ao cultivo da razão e ao progresso no conhecimento da verdade.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-discurso-do-metodo-8266-4",
+          "book_id": "auto-discurso-do-metodo-8266",
+          "position": 4,
+          "title": "Quarta Parte — A Dúvida Hiperbólica, o Cogito Ergo Sum e a Existência de Deus",
+          "content": "Descartes aplica a dúvida a todas as coisas:\n- Os sentidos às vezes nos enganam; logo, não é prudente confiar em quem já nos iludiu uma vez.\n- Homens se enganam mesmo nas mais simples demonstrações geométricas.\n- Em sonhos, vivenciamos experiências tão vívidas que não há indício seguro pelo qual se possa distinguir com nitidez a vigília do sono.\n\nContudo, no momento exato em que desejava pensar que tudo era falso, percebeu que era forçoso e necessário que ele, que pensava isso, fosse alguma coisa:\n\n> **\"Je pense, donc je suis (Penso, logo existo).\"**\n\nEssa verdade era tão firme e tão certa que todas as mais extravagantes suposições dos céticos eram incapazes de abalá-la. Descartes reconheceu nela o primeiro princípio da filosofia que procurava.\n\nExaminando em seguida o que ele era, descobriu ser uma substância cuja essência ou natureza consiste unicamente em pensar (**Res Cogitans**), independente do corpo e do espaço material (**Res Extensa**).\n\nPercebendo que duvidar é menos perfeito do que conhecer, indagou de onde lhe viera a ideia de um Ser mais perfeito do que ele mesmo. Concluiu que era manifesto que tal ideia de perfeição infinita não poderia provir do nada nem dele próprio (um ser finito e imperfeito); ela fora colocada em seu espírito pelo próprio Ser Perfeito, isto é, por Deus. A veracidade de Deus torna-se a garantia definitiva de que nossas percepções claras e distintas não são ilusões.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-discurso-do-metodo-8266-5",
+          "book_id": "auto-discurso-do-metodo-8266",
+          "position": 5,
+          "title": "Quinta e Sexta Partes — A Física, o Homem Mecânico e o Domínio da Natureza",
+          "content": "Nas partes finais, Descartes expõe os princípios de sua física mecanicista e sua fisiologia. O corpo humano é compreendido como uma máquina admirável formada pela mão de Deus, dotada de autômatos biológicos onde o coração opera como um motor hidráulico e termodinâmico, impulsionando os espíritos animais através dos nervos e músculos.\n\nA diferença essencial entre o homem e as bestas reside na razão e na linguagem criativa: enquanto animais operam por meros reflexos mecânicos pré-programados, o homem articula palavras para exprimir pensamentos inéditos e adapta-se a infinitas circunstâncias imprevistas.\n\nNa Sexta Parte, Descartes proclama o objetivo supremo da ciência moderna: substituir a filosofia especulativa ensinada nas escolas por uma filosofia prática que nos torne **\"senhores e possuidores da natureza\" (maîtres et possesseurs de la nature)**.\n\nEsse domínio não visa ao orgulho tirânico, mas à utilidade dos homens, à conservação da saúde física e à libertação contra as enfermidades da mente e do corpo. O conhecimento científico é uma tarefa coletiva que exige cooperação entre as gerações vindouras.",
+          "is_free_preview": true
+        }
+      ]
+    },
     {
       "id": "auto-etica-a-nicomaco-9631",
       "title": "Ética a Nicômaco",
