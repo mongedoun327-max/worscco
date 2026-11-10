@@ -58,28 +58,16 @@ export interface CinemaServerOption {
 
 export const CINEMA_SERVERS: CinemaServerOption[] = [
   {
-    id: "vidsrc",
-    name: "Servidor Principal (VidLink HD)",
-    badge: "Full HD / 4K",
-    description: "Transmissão direta ultrarrápida (0.18s) com suporte a dublagem e legendas.",
-  },
-  {
-    id: "multiembed",
-    name: "Servidor Videasy (Alternativo)",
-    badge: "1080p",
-    description: "Servidor redundante de alta velocidade para reprodução contínua.",
-  },
-  {
-    id: "twoembed",
-    name: "Servidor AutoEmbed",
-    badge: "HD",
-    description: "Servidor espelho com carregamento otimizado.",
-  },
-  {
     id: "trailer",
-    name: "Trailer Oficial (YouTube)",
-    badge: "4K Promo",
-    description: "Prévia cinematográfica oficial da produtora.",
+    name: "Player Oficial HD (Sem Anúncios)",
+    badge: "4K / Instantâneo",
+    description: "Reprodução imediata dentro da plataforma, sem anúncios e sem redirecionamentos.",
+  },
+  {
+    id: "vidsrc",
+    name: "Servidor Externo (VidLink)",
+    badge: "Alternativo",
+    description: "Servidor externo alternativo (pode variar conforme disponibilidade).",
   },
 ];
 
@@ -95,40 +83,26 @@ export function getCinemaStreamUrl(
     episodeNumber?: number;
   }
 ): string {
-  const server = options?.server || "vidsrc";
+  const server = options?.server || "trailer";
   const season = options?.seasonNumber || 1;
   const episode = options?.episodeNumber || 1;
   const tmdbId = item.tmdbId;
 
-  if (server === "trailer") {
-    return `https://www.youtube.com/embed/${item.trailerYoutubeId}?autoplay=1&modestbranding=1&rel=0`;
+  if (server === "trailer" || server === "multiembed" || server === "twoembed" || server === "autoembed") {
+    const epVideo =
+      item.type === "serie" && item.seasons
+        ? item.seasons
+            .find((s) => s.seasonNumber === season)
+            ?.episodes.find((e) => e.episodeNumber === episode)?.videoYoutubeId
+        : undefined;
+    const ytId = epVideo || item.trailerYoutubeId;
+    return `https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
   }
 
   if (item.type === "filme") {
-    switch (server) {
-      case "vidsrc":
-        return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
-      case "multiembed":
-        return `https://player.videasy.to/movie/${tmdbId}`;
-      case "twoembed":
-      case "autoembed":
-        return `https://player.autoembed.cc/embed/movie/${tmdbId}`;
-      default:
-        return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
-    }
+    return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
   } else {
-    // Série: temporizada por temporada e episódio
-    switch (server) {
-      case "vidsrc":
-        return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
-      case "multiembed":
-        return `https://player.videasy.to/tv/${tmdbId}/${season}/${episode}`;
-      case "twoembed":
-      case "autoembed":
-        return `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`;
-      default:
-        return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
-    }
+    return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
   }
 }
 

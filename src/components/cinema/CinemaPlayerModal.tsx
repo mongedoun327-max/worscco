@@ -44,7 +44,7 @@ export const CinemaPlayerModal = ({
   const [showIntro, setShowIntro] = useState(true);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   usePlayerAdBlock(isOpen);
-  const [selectedServer, setSelectedServer] = useState<CinemaServerId>("vidsrc");
+  const [selectedServer, setSelectedServer] = useState<CinemaServerId>("trailer");
   const [activeSeasonNumber, setActiveSeasonNumber] = useState<number>(initialSeasonNumber || 1);
   const [activeEpisodeNumber, setActiveEpisodeNumber] = useState<number>(initialEpisodeNumber || 1);
 
