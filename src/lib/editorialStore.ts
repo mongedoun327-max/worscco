@@ -13,6 +13,7 @@ import {
 } from "./cloudEditorialService";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { isExcludedItem, filterExcludedItems, EXCLUDED_IDS, EXCLUDED_SLUGS } from "./excludedItems";
 
 export const SPECIAL_ADMIN_EMAIL = "miguelworscoi@gmail.com";
 export const SPECIAL_ADMIN_PASS = "004116";
@@ -211,7 +212,8 @@ export function getCustomNewsPublications(): NewsItem[] {
 }
 
 export function getDeletedNewsIds(): string[] {
-  return safeReadJson<string[]>(DELETED_NEWS_KEY, []);
+  const local = safeReadJson<string[]>(DELETED_NEWS_KEY, []);
+  return Array.from(new Set([...local, ...Array.from(EXCLUDED_IDS), ...Array.from(EXCLUDED_SLUGS)]));
 }
 
 export function applyNewsEditorialOverrides(items: NewsItem[]): NewsItem[] {
@@ -253,7 +255,7 @@ export function applyNewsEditorialOverrides(items: NewsItem[]): NewsItem[] {
     result.push(merged);
   }
 
-  return result;
+  return filterExcludedItems(result);
 }
 
 export function getSingleNewsWithOverrides(
@@ -261,6 +263,9 @@ export function getSingleNewsWithOverrides(
   baseItem: NewsItem | null
 ): NewsItem | null {
   const cleanKey = slugOrId.trim().toLowerCase();
+  if (isExcludedItem({ id: cleanKey, slug: cleanKey }) || (baseItem && isExcludedItem(baseItem))) {
+    return null;
+  }
   const deletedSet = new Set(getDeletedNewsIds().map((k) => k.toLowerCase()));
   if (deletedSet.has(cleanKey)) return null;
 
@@ -858,7 +863,8 @@ export function getCustomBooks(): Book[] {
 }
 
 export function getDeletedBookIds(): string[] {
-  return safeReadJson<string[]>(DELETED_BOOKS_KEY, []);
+  const local = safeReadJson<string[]>(DELETED_BOOKS_KEY, []);
+  return Array.from(new Set([...local, ...Array.from(EXCLUDED_IDS)]));
 }
 
 export function applyBookEditorialOverrides(books: Book[], search = ""): Book[] {
@@ -895,10 +901,13 @@ export function applyBookEditorialOverrides(books: Book[], search = ""): Book[] 
     result.push(merged);
   }
 
-  return result;
+  return filterExcludedItems(result);
 }
 
 export function getSingleBookWithOverrides(id: string, baseBook: Book | null): Book | null {
+  if (isExcludedItem({ id }) || (baseBook && isExcludedItem(baseBook))) {
+    return null;
+  }
   const deletedSet = new Set(getDeletedBookIds());
   if (deletedSet.has(id)) return null;
 

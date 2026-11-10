@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-11-09T00:20:18.267Z",
+  "lastSync": "2026-11-10T00:09:46.236Z",
   "frequencyMinutes": 30,
   "isActive": true,
   "autoSources": {
@@ -8,6 +8,12 @@
     "curatedQueue": true
   },
   "logs": [
+    {
+      "id": "log-1794269386236",
+      "timestamp": "2026-11-10T00:09:46.236Z",
+      "level": "success",
+      "message": "[Automação] Livro \"Inteligência Emocional\" por Daniel Goleman importado com sucesso (5 capítulos)."
+    },
     {
       "id": "log-1794183618267",
       "timestamp": "2026-11-09T00:20:18.267Z",
@@ -47,13 +53,6 @@
   ],
   "queue": [
     {
-      "id": "queue-5",
-      "title": "Inteligência Emocional",
-      "author": "Daniel Goleman",
-      "category": "Psicologia e Mente",
-      "priority": "media"
-    },
-    {
       "id": "queue-6",
       "title": "Emílio, ou Da Educação",
       "author": "Jean-Jacques Rousseau",
@@ -62,6 +61,73 @@
     }
   ],
   "books": [
+    {
+      "id": "auto-inteligencia-emocional-6235",
+      "title": "Inteligência Emocional",
+      "subtitle": "Importado Automaticamente · Psicologia e Mente",
+      "author": "Daniel Goleman",
+      "description": "Obra fundamental de Psicologia e Mente por Daniel Goleman. Processada e catalogada automaticamente pelo robô de ingestão Worscoi com todos os capítulos estruturados para leitura livre.",
+      "cover_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1200&auto=format&fit=crop&q=80",
+      "category": "Psicologia e Mente",
+      "price_cents": 0,
+      "currency": "BRL",
+      "published": true,
+      "featured": true,
+      "created_at": "2026-11-10T00:09:46.236Z",
+      "downloads": 9820,
+      "rating": 4.9,
+      "rating_count": 194,
+      "formats": [
+        "Leitura Online",
+        "EPUB",
+        "TXT"
+      ],
+      "read_time": 260,
+      "source": "Automação Worscoi (Pipeline Inteligente)",
+      "is_automated": true,
+      "chapters": [
+        {
+          "id": "chap-auto-inteligencia-emocional-6235-1",
+          "book_id": "auto-inteligencia-emocional-6235",
+          "position": 1,
+          "title": "Capítulo I — A Neurobiologia das Emoções e o Sequestro da Amígdala",
+          "content": "Daniel Goleman demonstra que possuímos duas mentes: uma que pensa e outra que sente. Durante milhões de anos de evolução biológica, as estruturas cerebrais límbicas (responsáveis pelo medo, raiva, afeto e sobrevivência) desenvolveram-se muito antes do neocórtex racional.\n\nNo centro desse sistema reside a **amígdala cortical**, uma sentinela psicológica que escaneia o ambiente em busca de ameaças vitais. Em situações de estresse agudo ou provocação extrema, a amígdala pode deflagrar uma resposta de luta ou fuga milissegundos antes que o córtex pré-frontal consiga analisar racionalmente os fatos — fenômeno que Goleman consagrou como o **Sequestro da Amígdala (Amygdala Hijack)**.\n\nCompreender essa fiação neurológica é o primeiro passo para não se tornar refém de impulsos destrutivos.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-inteligencia-emocional-6235-2",
+          "book_id": "auto-inteligencia-emocional-6235",
+          "position": 2,
+          "title": "Capítulo II — Autoconsciência e o Domínio das Paixões (Autorregulação)",
+          "content": "A autoconsciência emocional é a capacidade de reconhecer um sentimento no exato momento em que ele surge. Sócrates já ensinava 'Conhece-te a ti mesmo'; na psicologia moderna, nomear com precisão o estado interior desativa a hiperativação da amígdala.\n\nA autorregulação, por sua vez, não significa reprimir ou anestesiar as emoções, mas dosá-las de modo proporcional. A ira, a ansiedade e a tristeza têm funções evolutivas saudáveis; tornam-se tóxicas apenas quando perdem o freio inibitório e se prolongam de forma desadaptativa.\n\nTécnicas de respiração, reestruturação cognitiva e pausas estratégicas permitem ao córtex pré-frontal retomar a liderança executiva sobre os impulsos emocionais.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-inteligencia-emocional-6235-3",
+          "book_id": "auto-inteligencia-emocional-6235",
+          "position": 3,
+          "title": "Capítulo III — Motivação Intrínseca e o Teste do Marshmallow",
+          "content": "A capacidade de adiar a gratificação imediata em prol de um objetivo de longo prazo é o maior indicador psicológico de sucesso na vida adulta.\n\nO célebre experimento do Marshmallow de Walter Mischel em Stanford acompanhou crianças de quatro anos que receberam a escolha: comer um doce agora ou esperar 15 minutos pelo segundo doce. Os jovens que conseguiram esperar apresentaram, décadas depois, notas escolares superiores, menor índice de obesidade, menos dependência química e casamentos mais duradouros.\n\nA auto-motivação alimenta-se do **estado de Fluxo (Flow)**, onde o indivíduo funde sua atenção com a tarefa, impulsionado pela paixão intrínseca e pelo otimismo inteligente perante os fracassos temporários.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-inteligencia-emocional-6235-4",
+          "book_id": "auto-inteligencia-emocional-6235",
+          "position": 4,
+          "title": "Capítulo IV — Empatia: A Leitura Sutil do Outro",
+          "content": "A empatia baseia-se na autoconsciência: quanto mais abertos estamos às nossas próprias emoções, mais habilidosos seremos na leitura dos sinais não verbais alheios.\n\nMais de 90% da comunicação emocional humana ocorre pelo tom de voz, expressão facial, postura física e microgestos. A empatia divide-se em três níveis:\n1. Empatia Cognitiva: Compreender a perspectiva intelectual do outro;\n2. Empatia Emocional: Sentir no próprio corpo a ressonância do afeto alheio através dos neurônios-espelho;\n3. Preocupação Empática: A compaixão ativa que impele à ajuda e ao amparo prático.\n\nA falta crônica de empatia é o traço distintivo de sociopatas, tiranos e líderes tóxicos que destroem o clima de suas organizações.",
+          "is_free_preview": true
+        },
+        {
+          "id": "chap-auto-inteligencia-emocional-6235-5",
+          "book_id": "auto-inteligencia-emocional-6235",
+          "position": 5,
+          "title": "Capítulo V — Aptidão Social, Liderança Ressonante e o Futuro da Educação",
+          "content": "As habilidades sociais coroam a Inteligência Emocional. Líderes extraordinários não se destacam pelo QI bruto ou conhecimento técnico isolado, mas pela capacidade de inspirar, resolver conflitos sem ferir dignidades, forjar alianças sólidas e contagiar grupos com entusiasmo sereno.\n\nGoleman conclama as escolas e famílias a implantarem a Alfabetização Socioemocional desde a infância. Ensinar matemática e gramática sem ensinar autodomínio, empatia e cooperação cidadã é produzir adultos desamparados que sucumbem à depressão, à violência e à solidão em um mundo hiperconectado.",
+          "is_free_preview": true
+        }
+      ]
+    },
     {
       "id": "auto-discurso-do-metodo-8266",
       "title": "Discurso do Método",

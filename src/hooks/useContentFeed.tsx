@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CONTENT_SELECT, Content, ContentType } from "./useContents";
+import { filterExcludedItems } from "@/lib/excludedItems";
 
 export type SortKey = "recent" | "popular" | "rating" | "price-low" | "price-high";
 
@@ -83,7 +84,7 @@ export const useContentFeed = (filters: ContentFilters) => {
 
       const { data, error } = await q.returns<Content[]>();
       if (error) throw error;
-      const items = data ?? [];
+      const items = filterExcludedItems(data ?? []);
       return {
         items,
         nextCursor: items.length === PAGE_SIZE ? cursorOf(items[items.length - 1], sort) : null,

@@ -4,6 +4,7 @@ import type { NewsItem } from "./useCatalog";
 import { syncDailyNews, getCachedNews } from "@/lib/newsSyndication";
 import { queryNewsArchive } from "@/lib/newsArchiveEngine";
 import { applyNewsEditorialOverrides } from "@/lib/editorialStore";
+import { filterExcludedItems } from "@/lib/excludedItems";
 
 const PAGE_SIZE = 16;
 
@@ -58,7 +59,7 @@ export const useNewsFeed = (filters: NewsFilters) =>
           .select("id,title,slug,excerpt,content,cover_url,category,published,published_at,created_at")
           .eq("published", true);
         if (!error && data) {
-          dbNews = data as NewsItem[];
+          dbNews = filterExcludedItems(data as NewsItem[]);
         }
       } catch {
         // Fallback gracefully
@@ -84,7 +85,7 @@ export const useNewsFeed = (filters: NewsFilters) =>
       }
 
       // 4b. Apply Editorial Studio overrides & custom publications
-      all = applyNewsEditorialOverrides(all);
+      all = filterExcludedItems(applyNewsEditorialOverrides(all));
 
       // 5. Apply Category Filter
       if (filters.category && filters.category !== "all") {

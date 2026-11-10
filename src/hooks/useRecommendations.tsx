@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { Content, ContentType } from "./useContents";
+import { filterExcludedItems } from "@/lib/excludedItems";
 
 type RecAction = "similar" | "for-you" | "continue-reading" | "because-you-read";
 
@@ -21,7 +22,7 @@ const fetchRecommendations = async (params: {
       method: "GET",
     });
     if (!error && data?.items && data.items.length > 0) {
-      return data.items as Content[];
+      return filterExcludedItems(data.items as Content[]);
     }
   } catch (err) {
     // Edge function unavailable; graceful fallback below

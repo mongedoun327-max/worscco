@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { Book } from "./useCatalog";
+import { isExcludedItem, filterExcludedItems } from "@/lib/excludedItems";
 
 export type ContentType = "book" | "webtoon" | "news" | "academic";
 
@@ -105,7 +106,7 @@ export const useContents = (options?: { type?: ContentType; category?: string; l
         q = q.order("created_at", { ascending: false });
         if (options?.limit) q = q.limit(options.limit);
         const { data, error } = await q;
-        if (!error && data) dbData = data as unknown as Content[];
+        if (!error && data) dbData = filterExcludedItems(data as unknown as Content[]);
       } catch {}
 
       // If requested type is "book", "academic" or all, merge Scientific, Curricular, Modern bestsellers and Gutenberg books
@@ -313,7 +314,7 @@ export const useContents = (options?: { type?: ContentType; category?: string; l
           for (const item of [...sciMapped, ...currMapped, ...autoMapped, ...modernMapped, ...gutenMapped, ...pdfMapped, ...dbData]) {
             if (!map.has(item.id)) map.set(item.id, item);
           }
-          const combined = Array.from(map.values());
+          const combined = filterExcludedItems(Array.from(map.values()));
           return options?.limit ? combined.slice(0, options.limit) : combined;
         } catch {}
       }
@@ -360,7 +361,7 @@ export const useContents = (options?: { type?: ContentType; category?: string; l
           for (const item of [...webtoonMapped, ...dbData]) {
             if (!map.has(item.id)) map.set(item.id, item);
           }
-          const combined = Array.from(map.values());
+          const combined = filterExcludedItems(Array.from(map.values()));
           if (options?.type === "webtoon") {
             return options?.limit ? combined.slice(0, options.limit) : combined;
           }
@@ -368,7 +369,7 @@ export const useContents = (options?: { type?: ContentType; category?: string; l
         } catch {}
       }
 
-      return dbData;
+      return filterExcludedItems(dbData);
     },
   });
 
@@ -386,14 +387,14 @@ export const useTrending = (period: "today" | "week" | "month" = "week", limit =
           .gte("created_at", since)
           .order("views", { ascending: false })
           .limit(limit);
-        if (!error && (data ?? []).length > 0) return data as unknown as Content[];
+        if (!error && (data ?? []).length > 0) return filterExcludedItems(data as unknown as Content[]);
         const { data: fallback, error: err2 } = await supabase
           .from("contents")
           .select(SELECT)
           .eq("published", true)
           .order("views", { ascending: false })
           .limit(limit);
-        if (!err2 && (fallback ?? []).length > 0) return (fallback ?? []) as unknown as Content[];
+        if (!err2 && (fallback ?? []).length > 0) return filterExcludedItems((fallback ?? []) as unknown as Content[]);
       } catch {}
 
       try {
@@ -434,8 +435,9 @@ export const useTrending = (period: "today" | "week" | "month" = "week", limit =
 export const useContent = (id?: string) =>
   useQuery({
     queryKey: ["content", id],
-    enabled: !!id,
+    enabled: !!id && !isExcludedItem({ id }),
     queryFn: async () => {
+      if (!id || isExcludedItem({ id })) return null;
       // Check Scientific Articles
       if (id.startsWith("sci-")) {
         const { SCIENTIFIC_ARTICLES } = await import("@/data/scientificArticles");
@@ -627,7 +629,7 @@ export const useContent = (id?: string) =>
           .select(`${SELECT},body`)
           .eq("id", id!)
           .maybeSingle();
-        if (!error && data) return data as unknown as Content | null;
+        if (!error && data && !isExcludedItem(data as any)) return data as unknown as Content | null;
       } catch {}
 
       return null;
@@ -637,9 +639,9 @@ export const useContent = (id?: string) =>
 export const useEpisodes = (contentId?: string) =>
   useQuery({
     queryKey: ["episodes", contentId],
-    enabled: !!contentId,
+    enabled: !!contentId && !isExcludedItem({ id: contentId }),
     queryFn: async () => {
-      if (!contentId) return [];
+      if (!contentId || isExcludedItem({ id: contentId })) return [];
 
       // Check Scientific Articles chapters
       if (contentId.startsWith("sci-")) {

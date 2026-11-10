@@ -98,11 +98,9 @@
 
 ## 4. Webtoons & Animes
 
-- **Kaze: O Andarilho do Vento** (Ação e fantasia)
-- **Estrela de Papel** (Romance e drama)
-- **O Garoto do Ramen** (Slice of life gastronômico)
-- **Sigilo Carmesim** (Suspense e mistério urbano)
-- **Farol da Meia-Noite** (Terror psicológico)
-- **A Janela dos Sonhos** (Ficção científica e sonhos lúcidos)
-- **A Última Praça** (Pós-apocalíptico e aventura)
+- **Solo Leveling: ReAwakening** (Ação e fantasia de caçadores)
+- **O Ponto de Vista do Leitor Onisciente** (Ação e apocalipse)
+- **O Retorno da Seita do Monte Hua** (Murim e artes marciais)
+- **A Torre de Deus (Tower of God)** (Fantasia épica e mistério)
+- **O Maior Engenheiro Imobiliário** (Comédia e isekai)
 - Catálogo de Animes: https://worsco.vercel.app/animes

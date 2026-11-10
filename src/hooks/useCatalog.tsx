@@ -8,6 +8,7 @@ import {
   getSingleBookWithOverrides,
   getSingleNewsWithOverrides,
 } from "@/lib/editorialStore";
+import { isExcludedItem, filterExcludedItems } from "@/lib/excludedItems";
 
 export type Book = {
   id: string;
@@ -65,7 +66,7 @@ export const useBooks = (search = "") =>
           q = q.or(`title.ilike.%${search}%,author.ilike.%${search}%`);
         }
         const { data, error } = await q;
-        if (!error && data) dbBooks = data as Book[];
+        if (!error && data) dbBooks = filterExcludedItems(data as Book[]);
       } catch {
         // Fallback gracefully
       }
@@ -264,16 +265,16 @@ export const useBooks = (search = "") =>
         if (!map.has(b.id)) map.set(b.id, b);
       }
 
-      return applyBookEditorialOverrides(Array.from(map.values()), search);
+      return filterExcludedItems(applyBookEditorialOverrides(Array.from(map.values()), search));
     },
   });
 
 export const useBook = (id?: string) =>
   useQuery({
     queryKey: ["book", id],
-    enabled: !!id,
+    enabled: !!id && !isExcludedItem({ id }),
     queryFn: async () => {
-      if (!id) return null;
+      if (!id || isExcludedItem({ id })) return null;
 
       // Check custom/overridden editorial book first
       const directCustom = getSingleBookWithOverrides(id, null);
@@ -583,7 +584,7 @@ export const useNews = () =>
           .from("news")
           .select("*")
           .order("published_at", { ascending: false });
-        if (!error && data) dbNews = data as NewsItem[];
+        if (!error && data) dbNews = filterExcludedItems(data as NewsItem[]);
       } catch {
         // Fallback if supabase connection is offline
       }
@@ -632,18 +633,18 @@ export const useNews = () =>
         if (diff !== 0) return diff;
         return (a.id || "").localeCompare(b.id || "");
       });
-      return overridden;
+      return filterExcludedItems(overridden);
     },
   });
 
 export const useArticle = (slug?: string) =>
   useQuery({
     queryKey: ["news", slug],
-    enabled: !!slug,
+    enabled: !!slug && !isExcludedItem({ slug, id: slug }),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      if (!slug) return null;
+      if (!slug || isExcludedItem({ slug, id: slug })) return null;
       let rawFound: NewsItem | null = null;
 
       // 0. Check if edited or created in Editorial Studio first

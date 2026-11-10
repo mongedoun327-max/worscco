@@ -29,6 +29,7 @@ import {
   getDownloadPdfUrl,
 } from "@/lib/originalPdfRegistry";
 import OriginalPdfViewer from "@/components/books/OriginalPdfViewer";
+import { isExcludedItem } from "@/lib/excludedItems";
 
 type ThemeMode = "light" | "sepia" | "dark" | "oled";
 type FontSizeMode = "sm" | "md" | "lg" | "xl";
@@ -278,6 +279,17 @@ const Reader = () => {
     }
     return parts.length > 0 ? parts : text;
   };
+
+  if (isExcludedItem({ id })) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center p-6 ${currentTheme.bg} ${currentTheme.text}`}>
+        <p className="text-sm font-light mb-4 opacity-80">Livro não encontrado ou indisponível.</p>
+        <Link to="/livros" className="text-xs uppercase tracking-wider text-primary underline">
+          Voltar ao catálogo
+        </Link>
+      </div>
+    );
+  }
 
   const isPublicDomain = id?.startsWith("guten-") || id?.includes("gutenberg") || !book?.price_cents;
 
