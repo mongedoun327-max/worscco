@@ -42,6 +42,7 @@ export const CinemaPlayerModal = ({
 }: CinemaPlayerModalProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showIntro, setShowIntro] = useState(true);
+  const [isIframeLoading, setIsIframeLoading] = useState(true);
   usePlayerAdBlock(isOpen);
   const [selectedServer, setSelectedServer] = useState<CinemaServerId>("vidsrc");
   const [activeSeasonNumber, setActiveSeasonNumber] = useState<number>(initialSeasonNumber || 1);
@@ -70,9 +71,23 @@ export const CinemaPlayerModal = ({
     }
   }, [item?.id, initialSeasonNumber, initialEpisodeNumber]);
 
+  // Reset intro and loading shield when stream changes
+  useEffect(() => {
+    if (!isOpen) return;
+    setShowIntro(true);
+    setIsIframeLoading(true);
+  }, [isOpen, item?.id, activeSeasonNumber, activeEpisodeNumber]);
+
+  useEffect(() => {
+    if (!isOpen || showIntro) return;
+    setIsIframeLoading(true);
+    const timer = setTimeout(() => setIsIframeLoading(false), 4000);
+    return () => clearTimeout(timer);
+  }, [isOpen, showIntro, selectedServer]);
+
   // Track progress periodically while player is open
   useEffect(() => {
-    if (!item || !isOpen || showIntro) return;
+    if (!item || !isOpen) return;
     const interval = setInterval(() => {
       saveCinemaProgress(
         item.id,
@@ -82,7 +97,7 @@ export const CinemaPlayerModal = ({
       );
     }, 15000);
     return () => clearInterval(interval);
-  }, [item, isOpen, showIntro, activeSeasonNumber, activeEpisodeNumber]);
+  }, [item, isOpen, activeSeasonNumber, activeEpisodeNumber]);
 
   if (!item) return null;
 
@@ -261,16 +276,45 @@ export const CinemaPlayerModal = ({
           {showIntro ? (
             <WorscoiIntroPlayer onComplete={() => setShowIntro(false)} allowSkip />
           ) : (
-            <iframe
-              ref={iframeRef}
-              key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
-              src={streamUrl}
-              title={`${item.title} Reprodução Cinema`}
-              className="w-full h-full border-0"
-              referrerPolicy="no-referrer"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-            />
+            <>
+              <iframe
+                ref={iframeRef}
+                key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
+                src={streamUrl}
+                title={`${item.title} Reprodução Cinema`}
+                className="w-full h-full border-0"
+                referrerPolicy="no-referrer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                allowFullScreen
+                onLoad={() => setIsIframeLoading(false)}
+              />
+              {isIframeLoading && (
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="absolute inset-0 z-30 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 select-none cursor-wait"
+                >
+                  <div className="w-10 h-10 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                  <p className="text-xs sm:text-sm text-zinc-300 font-medium">
+                    Conectando ao servidor de reprodução…
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedServer("trailer");
+                      }}
+                      className="px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      Reproduzir Prévia Imediata (YouTube)
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
