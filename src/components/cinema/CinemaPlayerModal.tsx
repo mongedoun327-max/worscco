@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { usePlayerAdBlock } from "@/hooks/usePlayerAdBlock";
+import { fetchTVmazeEpisodesByTitle, TVmazeEpisode } from "@/lib/tvmazeApi";
 import {
   CinemaItem,
   CinemaServerId,
@@ -45,8 +46,24 @@ export const CinemaPlayerModal = ({
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   usePlayerAdBlock(isOpen);
   const [selectedServer, setSelectedServer] = useState<CinemaServerId>("trailer");
+  const [customStreamUrl, setCustomStreamUrl] = useState("");
   const [activeSeasonNumber, setActiveSeasonNumber] = useState<number>(initialSeasonNumber || 1);
   const [activeEpisodeNumber, setActiveEpisodeNumber] = useState<number>(initialEpisodeNumber || 1);
+  const [tvmazeEpisodes, setTvmazeEpisodes] = useState<TVmazeEpisode[]>([]);
+
+  useEffect(() => {
+    if (!isOpen || !item || item.type !== "serie") {
+      setTvmazeEpisodes([]);
+      return;
+    }
+    let cancelled = false;
+    fetchTVmazeEpisodesByTitle(item.originalTitle || item.title).then((eps) => {
+      if (!cancelled && eps.length > 0) setTvmazeEpisodes(eps);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, item?.id, item?.type, item?.originalTitle, item?.title]);
 
   // Sync initial episode & season when item changes
   useEffect(() => {
@@ -272,17 +289,46 @@ export const CinemaPlayerModal = ({
 
         {/* Video Player Display */}
         <div className="relative aspect-video w-full bg-black">
-          <iframe
-            ref={iframeRef}
-            key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
-            src={streamUrl}
-            title={`${item.title} Reprodução Cinema`}
-            className={`w-full h-full border-0 ${showIntro ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-            referrerPolicy="no-referrer-when-downgrade"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-            onLoad={() => setIsIframeLoading(false)}
-          />
+          {selectedServer === "native" ? (
+            <div className="w-full h-full flex flex-col bg-black">
+              <div className="flex items-center gap-2 p-2.5 bg-zinc-900/90 border-b border-white/10">
+                <input
+                  type="url"
+                  value={customStreamUrl}
+                  onChange={(e) => setCustomStreamUrl(e.target.value)}
+                  placeholder="Cole aqui o link direto .mp4 ou .m3u8 do filme/episódio..."
+                  className="flex-1 bg-zinc-950 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              {customStreamUrl.trim() ? (
+                <video
+                  key={customStreamUrl}
+                  src={customStreamUrl.trim()}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full flex-1 bg-black"
+                />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-zinc-400 text-xs gap-2">
+                  <p className="text-sm text-zinc-200 font-medium">Player Nativo HTML5 (Sem Iframe / Sem Anúncios)</p>
+                  <p>Cole um link direto <code className="text-amber-400">.mp4</code> ou <code className="text-amber-400">.m3u8</code> acima para reproduzir imediatamente.</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <iframe
+              ref={iframeRef}
+              key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
+              src={streamUrl}
+              title={`${item.title} Reprodução Cinema`}
+              className={`w-full h-full border-0 ${showIntro ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              referrerPolicy="no-referrer-when-downgrade"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+              onLoad={() => setIsIframeLoading(false)}
+            />
+          )}
           {showIntro ? (
             <div className="absolute inset-0 z-40">
               <WorscoiIntroPlayer onComplete={() => setShowIntro(false)} allowSkip />

@@ -47,7 +47,7 @@ export interface CinemaItem {
   seasons?: CinemaSeason[];
 }
 
-export type CinemaServerId = "vidsrc" | "multiembed" | "twoembed" | "autoembed" | "trailer";
+export type CinemaServerId = "native" | "vidsrc" | "multiembed" | "twoembed" | "autoembed" | "trailer";
 
 export interface CinemaServerOption {
   id: CinemaServerId;
@@ -62,6 +62,18 @@ export const CINEMA_SERVERS: CinemaServerOption[] = [
     name: "Player Oficial HD (Sem Anúncios)",
     badge: "4K / Instantâneo",
     description: "Reprodução imediata e garantida dentro da plataforma, sem bloqueio de DNS.",
+  },
+  {
+    id: "native",
+    name: "Player Nativo (Link MP4 / M3U8)",
+    badge: "Direto",
+    description: "Reproduza qualquer link direto .mp4 ou .m3u8 no player nativo sem iframe.",
+  },
+  {
+    id: "autoembed",
+    name: "Servidor Externo (VidCore)",
+    badge: "Full HD",
+    description: "Player externo via TMDb ID (VidCore API).",
   },
   {
     id: "multiembed",
@@ -87,6 +99,13 @@ export function getCinemaStreamUrl(
   const season = options?.seasonNumber || 1;
   const episode = options?.episodeNumber || 1;
   const tmdbId = item.tmdbId;
+
+  if (server === "autoembed") {
+    if (item.type === "filme") {
+      return `https://vidcore.net/embed/movie/${tmdbId}`;
+    }
+    return `https://vidcore.net/embed/tv/${tmdbId}/${season}/${episode}`;
+  }
 
   if (server === "multiembed" || server === "vidsrc") {
     if (item.type === "filme") {
