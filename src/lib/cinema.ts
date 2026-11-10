@@ -59,21 +59,21 @@ export interface CinemaServerOption {
 export const CINEMA_SERVERS: CinemaServerOption[] = [
   {
     id: "vidsrc",
-    name: "Servidor Principal (VidSrc)",
+    name: "Servidor Principal (VidLink HD)",
     badge: "Full HD / 4K",
-    description: "Transmissão direta com suporte a faixas de dublagem e legendas em português.",
+    description: "Transmissão direta sem bloqueio de frame, com suporte a dublagem e legendas.",
   },
   {
     id: "multiembed",
-    name: "Servidor MultiEmbed (Alternativo)",
+    name: "Servidor VidSrc CC (Alternativo)",
     badge: "1080p",
     description: "Servidor redundante de alta velocidade para reprodução contínua.",
   },
   {
     id: "twoembed",
-    name: "Servidor 2Embed",
+    name: "Servidor EmbedSU",
     badge: "HD",
-    description: "Servidor espelho com carregamento otimizado para conexões móveis.",
+    description: "Servidor espelho com carregamento otimizado.",
   },
   {
     id: "trailer",
@@ -98,7 +98,6 @@ export function getCinemaStreamUrl(
   const server = options?.server || "vidsrc";
   const season = options?.seasonNumber || 1;
   const episode = options?.episodeNumber || 1;
-  const imdbId = item.imdbId;
   const tmdbId = item.tmdbId;
 
   if (server === "trailer") {
@@ -108,29 +107,29 @@ export function getCinemaStreamUrl(
   if (item.type === "filme") {
     switch (server) {
       case "vidsrc":
-        return `https://vidsrc.to/embed/movie/${imdbId}`;
+        return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
       case "multiembed":
-        return `https://multiembed.mov/?video_id=${imdbId}&tmdb=1`;
+        return `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
       case "twoembed":
-        return `https://www.2embed.cc/embed/${imdbId}`;
+        return `https://embed.su/embed/movie/${tmdbId}`;
       case "autoembed":
-        return `https://player.autoembed.cc/embed/movie/${imdbId}`;
+        return `https://player.autoembed.cc/embed/movie/${tmdbId}`;
       default:
-        return `https://vidsrc.to/embed/movie/${imdbId}`;
+        return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
     }
   } else {
     // Série: temporizada por temporada e episódio
     switch (server) {
       case "vidsrc":
-        return `https://vidsrc.to/embed/tv/${imdbId}/${season}/${episode}`;
+        return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
       case "multiembed":
-        return `https://multiembed.mov/?video_id=${imdbId}&tmdb=1&s=${season}&e=${episode}`;
+        return `https://vidsrc.cc/v2/embed/tv/${tmdbId}/${season}/${episode}`;
       case "twoembed":
-        return `https://www.2embed.cc/embedtv/${imdbId}&s=${season}&e=${episode}`;
+        return `https://embed.su/embed/tv/${tmdbId}/${season}/${episode}`;
       case "autoembed":
-        return `https://player.autoembed.cc/embed/tv/${imdbId}/${season}/${episode}`;
+        return `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`;
       default:
-        return `https://vidsrc.to/embed/tv/${imdbId}/${season}/${episode}`;
+        return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
     }
   }
 }
