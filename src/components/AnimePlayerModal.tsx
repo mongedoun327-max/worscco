@@ -125,9 +125,8 @@ export const AnimePlayerModal = ({ anime, isOpen, onClose }: AnimePlayerModalPro
             key={`${anime.id}-s${activeSeason?.seasonNumber || 1}-${trailerId}`}
             src={safeTrailerUrl}
             title={`Trailer Oficial de ${anime.title}`}
-            sandbox="allow-scripts allow-same-origin allow-presentation allow-encrypted-media"
             referrerPolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
             className="w-full h-full border-0 select-none"
           />

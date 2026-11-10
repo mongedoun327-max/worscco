@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { usePlayerAdBlock } from "@/hooks/usePlayerAdBlock";
 import {
   CinemaItem,
   CinemaServerId,
@@ -41,6 +42,7 @@ export const CinemaPlayerModal = ({
 }: CinemaPlayerModalProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showIntro, setShowIntro] = useState(true);
+  usePlayerAdBlock(isOpen);
   const [selectedServer, setSelectedServer] = useState<CinemaServerId>("vidsrc");
   const [activeSeasonNumber, setActiveSeasonNumber] = useState<number>(initialSeasonNumber || 1);
   const [activeEpisodeNumber, setActiveEpisodeNumber] = useState<number>(initialEpisodeNumber || 1);
@@ -265,9 +267,9 @@ export const CinemaPlayerModal = ({
               src={streamUrl}
               title={`${item.title} Reprodução Cinema`}
               className="w-full h-full border-0"
+              referrerPolicy="no-referrer"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
               allowFullScreen
-              sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
             />
           )}
         </div>

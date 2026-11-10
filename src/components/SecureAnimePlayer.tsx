@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { usePlayerAdBlock } from "@/hooks/usePlayerAdBlock";
 import {
   Play,
   Pause,
@@ -84,6 +85,7 @@ export const SecureAnimePlayer: React.FC<SecureAnimePlayerProps> = ({
   hasNextEpisode = false,
   hasPreviousEpisode = false,
 }) => {
+  usePlayerAdBlock(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [selectedQuality, setSelectedQuality] = useState<"1080p" | "720p">("1080p");
@@ -597,7 +599,6 @@ export const SecureAnimePlayer: React.FC<SecureAnimePlayerProps> = ({
             key={`${episode.id}-anivideo-${audioTrack}`}
             src={anivideoIframeUrl}
             title={`${animeTitle} - T${season.seasonNumber}:E${episode.number} (JWPlayer HD)`}
-            sandbox="allow-scripts allow-same-origin allow-presentation allow-encrypted-media"
             referrerPolicy="no-referrer"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
@@ -611,9 +612,8 @@ export const SecureAnimePlayer: React.FC<SecureAnimePlayerProps> = ({
               key={`${episode.id}-trailer-${selectedQuality}`}
               src={trailerIframeUrl}
               title={`${animeTitle} - Trailer Oficial T${season.seasonNumber}`}
-              sandbox="allow-scripts allow-same-origin allow-presentation allow-encrypted-media"
               referrerPolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
               allowFullScreen
               className="w-full h-full border-0 select-none"
             />
