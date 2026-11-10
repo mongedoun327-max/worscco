@@ -80,8 +80,7 @@ export const CinemaPlayerModal = ({
 
   useEffect(() => {
     if (!isOpen || showIntro) return;
-    setIsIframeLoading(true);
-    const timer = setTimeout(() => setIsIframeLoading(false), 4000);
+    const timer = setTimeout(() => setIsIframeLoading(false), 1500);
     return () => clearTimeout(timer);
   }, [isOpen, showIntro, selectedServer]);
 
@@ -273,48 +272,48 @@ export const CinemaPlayerModal = ({
 
         {/* Video Player Display */}
         <div className="relative aspect-video w-full bg-black">
+          <iframe
+            ref={iframeRef}
+            key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
+            src={streamUrl}
+            title={`${item.title} Reprodução Cinema`}
+            className={`w-full h-full border-0 ${showIntro ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+            referrerPolicy="no-referrer"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+            onLoad={() => setIsIframeLoading(false)}
+          />
           {showIntro ? (
-            <WorscoiIntroPlayer onComplete={() => setShowIntro(false)} allowSkip />
+            <div className="absolute inset-0 z-40">
+              <WorscoiIntroPlayer onComplete={() => setShowIntro(false)} allowSkip />
+            </div>
           ) : (
-            <>
-              <iframe
-                ref={iframeRef}
-                key={`${item.id}-${selectedServer}-${activeSeasonNumber}-${activeEpisodeNumber}`}
-                src={streamUrl}
-                title={`${item.title} Reprodução Cinema`}
-                className="w-full h-full border-0"
-                referrerPolicy="no-referrer"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
-                onLoad={() => setIsIframeLoading(false)}
-              />
-              {isIframeLoading && (
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className="absolute inset-0 z-30 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 select-none cursor-wait"
-                >
-                  <div className="w-10 h-10 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-                  <p className="text-xs sm:text-sm text-zinc-300 font-medium">
-                    Conectando ao servidor de reprodução…
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedServer("trailer");
-                      }}
-                      className="px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold transition-colors cursor-pointer"
-                    >
-                      Reproduzir Prévia Imediata (YouTube)
-                    </button>
-                  </div>
+            isIframeLoading && (
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="absolute inset-0 z-30 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 select-none cursor-wait"
+              >
+                <div className="w-10 h-10 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+                <p className="text-xs sm:text-sm text-zinc-300 font-medium">
+                  Conectando ao servidor de reprodução…
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedServer("trailer");
+                    }}
+                    className="px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Reproduzir Prévia Imediata (YouTube)
+                  </button>
                 </div>
-              )}
-            </>
+              </div>
+            )
           )}
         </div>
 

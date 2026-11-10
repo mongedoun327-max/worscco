@@ -61,17 +61,17 @@ export const CINEMA_SERVERS: CinemaServerOption[] = [
     id: "vidsrc",
     name: "Servidor Principal (VidLink HD)",
     badge: "Full HD / 4K",
-    description: "Transmissão direta sem bloqueio de frame, com suporte a dublagem e legendas.",
+    description: "Transmissão direta ultrarrápida (0.18s) com suporte a dublagem e legendas.",
   },
   {
     id: "multiembed",
-    name: "Servidor VidSrc CC (Alternativo)",
+    name: "Servidor Videasy (Alternativo)",
     badge: "1080p",
     description: "Servidor redundante de alta velocidade para reprodução contínua.",
   },
   {
     id: "twoembed",
-    name: "Servidor EmbedSU",
+    name: "Servidor AutoEmbed",
     badge: "HD",
     description: "Servidor espelho com carregamento otimizado.",
   },
@@ -109,9 +109,8 @@ export function getCinemaStreamUrl(
       case "vidsrc":
         return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
       case "multiembed":
-        return `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+        return `https://player.videasy.to/movie/${tmdbId}`;
       case "twoembed":
-        return `https://embed.su/embed/movie/${tmdbId}`;
       case "autoembed":
         return `https://player.autoembed.cc/embed/movie/${tmdbId}`;
       default:
@@ -123,9 +122,8 @@ export function getCinemaStreamUrl(
       case "vidsrc":
         return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
       case "multiembed":
-        return `https://vidsrc.cc/v2/embed/tv/${tmdbId}/${season}/${episode}`;
+        return `https://player.videasy.to/tv/${tmdbId}/${season}/${episode}`;
       case "twoembed":
-        return `https://embed.su/embed/tv/${tmdbId}/${season}/${episode}`;
       case "autoembed":
         return `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`;
       default:
