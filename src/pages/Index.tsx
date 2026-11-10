@@ -16,6 +16,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useForYou, useContinueReading } from "@/hooks/useRecommendations";
 import { ANIMES_DATA } from "@/lib/animes";
 import AnimeCard from "@/components/AnimeCard";
+import { CINEMA_CATALOG } from "@/lib/cinema";
+import CinemaCard from "@/components/cinema/CinemaCard";
 
 const Index = () => {
   const { data: news = [] } = useNews();
@@ -134,6 +136,43 @@ const Index = () => {
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {ANIMES_DATA.slice(0, 4).map((anime) => (
               <AnimeCard key={anime.id} item={anime} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de Cinema & Séries em Destaque na Home */}
+      <section className="py-20 lg:py-24 bg-[#0a0d14] text-zinc-100 border-b border-white/5">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <div>
+              <span className="text-[11px] uppercase tracking-wider text-amber-400 font-medium mb-2 block">
+                Streaming & Entretenimento
+              </span>
+              <h2 className="text-2xl md:text-3xl font-serif tracking-tight text-white">
+                Cinema & Séries Worsco
+              </h2>
+              <p className="text-xs text-zinc-400 font-light mt-1">
+                Grandes produções cinematográficas, clássicos premiados e séries aclamadas pela crítica.
+              </p>
+            </div>
+
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="rounded-full text-[11px] uppercase tracking-wider font-normal px-5 self-start md:self-auto border-white/20 bg-white/5 hover:bg-amber-500 hover:text-black text-white transition"
+            >
+              <Link to="/cinema">
+                Explorar Catálogo de Cinema
+                <ArrowRight className="ml-2 h-3 w-3" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {CINEMA_CATALOG.slice(0, 4).map((item) => (
+              <CinemaCard key={item.id} item={item} />
             ))}
           </div>
         </div>

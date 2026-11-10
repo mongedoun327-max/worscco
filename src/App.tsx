@@ -22,6 +22,8 @@ import WebtoonReader from "./pages/WebtoonReader";
 import Animes from "./pages/Animes";
 import AnimeDetail from "./pages/AnimeDetail";
 import AnimeMangaReader from "./pages/AnimeMangaReader";
+import Cinema from "./pages/Cinema";
+import CinemaDetail from "./pages/CinemaDetail";
 import ForYou from "./pages/ForYou";
 import ContinueReading from "./pages/ContinueReading";
 import Search from "./pages/Search";
@@ -81,6 +83,8 @@ const App = () => (
           <Route path="/animes/:id" element={<AnimeDetail />} />
           <Route path="/animes/:id/manga" element={<AnimeMangaReader />} />
           <Route path="/animes/:id/manga/:chapterId" element={<AnimeMangaReader />} />
+          <Route path="/cinema" element={<Cinema />} />
+          <Route path="/cinema/:id" element={<CinemaDetail />} />
           <Route path="/para-voce" element={<ForYou />} />
           <Route path="/continuar-lendo" element={<ContinueReading />} />
           <Route path="/buscar" element={<Search />} />

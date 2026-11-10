@@ -14,6 +14,7 @@ const STATIC_ROUTES = [
   { path: '/livros', changefreq: 'daily', priority: '0.9' },
   { path: '/webtoons', changefreq: 'daily', priority: '0.9' },
   { path: '/animes', changefreq: 'daily', priority: '0.9' },
+  { path: '/cinema', changefreq: 'daily', priority: '0.9' },
   { path: '/noticias', changefreq: 'hourly', priority: '0.9' },
   { path: '/para-voce', changefreq: 'daily', priority: '0.8' },
   { path: '/biblioteca', changefreq: 'weekly', priority: '0.7' },
@@ -156,6 +157,18 @@ export function buildSitemapXml(customOrigin = BASE_URL) {
   for (const id of animeIds) {
     urlEntries.push({
       loc: `${origin}/animes/${id}`,
+      lastmod: TODAY,
+      changefreq: 'weekly',
+      priority: '0.8',
+    });
+  }
+
+  // 6.1 Cinema & Series (canonical movies and TV productions)
+  const cinemaIds = extractIds('src/lib/cinema.ts', /id:\s*"([a-z0-9-]+)"/g)
+    .filter((id) => !id.includes('/') && !id.startsWith('ep-'));
+  for (const id of cinemaIds) {
+    urlEntries.push({
+      loc: `${origin}/cinema/${id}`,
       lastmod: TODAY,
       changefreq: 'weekly',
       priority: '0.8',

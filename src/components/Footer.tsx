@@ -47,6 +47,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/cinema" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
+                  Cinema & Séries
+                </Link>
+              </li>
+              <li>
                 <Link to="/noticias" className="text-background/70 hover:text-background smooth-hover text-xs font-light">
                   Notícias
                 </Link>

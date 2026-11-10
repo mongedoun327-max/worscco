@@ -32,6 +32,11 @@ const ROUTE_META_MAP: Record<string, RouteMeta> = {
     description:
       "Catálogo de animes, episódios, trailers, fichas técnicas completas e capítulos de mangá vinculados.",
   },
+  "/cinema": {
+    title: "Cinema & Séries — Filmes e Séries Online — Worsco",
+    description:
+      "Assista a filmes e séries aclamados com player cinematográfico, seleção de episódios em alta definição e catálogo completo na Worsco.",
+  },
   "/biblioteca": {
     title: "Minha Estante — Worsco",
     description:

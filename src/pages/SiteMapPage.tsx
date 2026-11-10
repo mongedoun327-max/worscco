@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ANIMES_DATA } from "@/lib/animes";
 import { BASE_CURATED_WEBTOONS } from "@/lib/webtoons";
+import { CINEMA_CATALOG } from "@/lib/cinema";
 import { NEWS_CATEGORIES } from "@/lib/news";
 
 const MAIN_PAGES = [
@@ -23,6 +24,7 @@ const MAIN_PAGES = [
   { path: "/livros", title: "Catálogo de Livros Digitais", desc: "Bestsellers modernos, didáticos para o ENEM e artigos científicos." },
   { path: "/webtoons", title: "Webtoons & Comics", desc: "Séries ilustradas em formato scroll com alta resolução." },
   { path: "/animes", title: "Portal de Animes", desc: "Fichas completas, episódios, trailers e leitura de mangás vinculados." },
+  { path: "/cinema", title: "Cinema & Séries", desc: "Catálogo de filmes e séries com player imersivo, temporadas e alta definição." },
   { path: "/noticias", title: "Portal de Notícias", desc: "Cobertura diária de cultura, futebol, mercado, tecnologia e entretenimento." },
   { path: "/biblioteca", title: "Minha Estante", desc: "Acesse seus livros salvos, títulos adquiridos e histórico de leitura." },
   { path: "/para-voce", title: "Recomendações Personalizadas", desc: "Sugestões de leitura baseadas nos seus interesses." },
@@ -206,6 +208,29 @@ const SiteMapPage = () => {
                 title={anime.title}
               >
                 {anime.title}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 5.1: Cinema & Séries */}
+        <section className="mb-14">
+          <h2 className="text-xl font-normal text-foreground mb-5 flex items-center gap-2">
+            <Film className="h-5 w-5 text-primary" />
+            Cinema & Séries
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {CINEMA_CATALOG.map((item) => (
+              <Link
+                key={item.id}
+                to={`/cinema/${item.id}`}
+                className="p-3 rounded-lg border border-border bg-card/40 hover:bg-card hover:border-primary/50 transition-all text-xs font-medium text-foreground truncate flex items-center justify-between"
+                title={item.title}
+              >
+                <span className="truncate">{item.title}</span>
+                <span className="text-[10px] text-muted-foreground ml-2 uppercase font-mono">
+                  {item.type === "filme" ? "Filme" : "Série"}
+                </span>
               </Link>
             ))}
           </div>
