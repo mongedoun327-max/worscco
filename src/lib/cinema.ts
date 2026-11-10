@@ -61,19 +61,19 @@ export const CINEMA_SERVERS: CinemaServerOption[] = [
     id: "trailer",
     name: "Player Oficial HD (Sem Anúncios)",
     badge: "4K / Instantâneo",
-    description: "Reprodução imediata dentro da plataforma, sem anúncios e sem redirecionamentos.",
+    description: "Reprodução imediata e garantida dentro da plataforma, sem bloqueio de DNS.",
   },
   {
-    id: "vidsrc",
+    id: "multiembed",
     name: "Servidor Externo (VidLink)",
     badge: "Alternativo",
-    description: "Servidor externo alternativo (pode variar conforme disponibilidade).",
+    description: "Servidor externo via TMDb (sujeito à disponibilidade do título).",
   },
 ];
 
 /**
- * Retorna a URL de reprodução em streaming real para filmes ou episódios de séries,
- * utilizando os identificadores canônicos do IMDb / TMDb.
+ * Retorna a URL de reprodução em streaming para filmes ou episódios de séries,
+ * utilizando fontes verificadas e sem bloqueio de DNS.
  */
 export function getCinemaStreamUrl(
   item: CinemaItem,
@@ -88,22 +88,21 @@ export function getCinemaStreamUrl(
   const episode = options?.episodeNumber || 1;
   const tmdbId = item.tmdbId;
 
-  if (server === "trailer" || server === "multiembed" || server === "twoembed" || server === "autoembed") {
-    const epVideo =
-      item.type === "serie" && item.seasons
-        ? item.seasons
-            .find((s) => s.seasonNumber === season)
-            ?.episodes.find((e) => e.episodeNumber === episode)?.videoYoutubeId
-        : undefined;
-    const ytId = epVideo || item.trailerYoutubeId;
-    return `https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
-  }
-
-  if (item.type === "filme") {
-    return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
-  } else {
+  if (server === "multiembed" || server === "vidsrc") {
+    if (item.type === "filme") {
+      return `https://vidlink.pro/movie/${tmdbId}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
+    }
     return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=f59e0b&secondaryColor=18181b&autoplay=true`;
   }
+
+  const epVideo =
+    item.type === "serie" && item.seasons
+      ? item.seasons
+          .find((s) => s.seasonNumber === season)
+          ?.episodes.find((e) => e.episodeNumber === episode)?.videoYoutubeId
+      : undefined;
+  const ytId = epVideo || item.trailerYoutubeId || "Way9Dexny3w";
+  return `https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
 }
 
 export const CINEMA_GENRES = [
