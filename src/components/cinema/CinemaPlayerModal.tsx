@@ -278,7 +278,7 @@ export const CinemaPlayerModal = ({
             src={streamUrl}
             title={`${item.title} Reprodução Cinema`}
             className={`w-full h-full border-0 ${showIntro ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-            referrerPolicy="no-referrer"
+            referrerPolicy="no-referrer-when-downgrade"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
             onLoad={() => setIsIframeLoading(false)}
